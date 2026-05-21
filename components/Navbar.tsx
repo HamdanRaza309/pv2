@@ -2,8 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
+import Image from "next/image";
 import { ThemeToggle } from "./ThemeToggle";
 import { nav, personal } from "@/lib/data";
+import hamdanPhoto from "@/assets/hamdan.png";
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -29,8 +31,13 @@ export function Navbar() {
           href="#top"
           className="flex items-center gap-2 font-mono text-sm tracking-wider"
         >
-          <span className="grid h-8 w-8 place-items-center rounded-full border border-fg/20">
-            {personal.initials}
+          <span className="grid h-8 w-8 place-items-center rounded-full border border-fg/20 overflow-hidden">
+            <Image
+              src={hamdanPhoto}
+              alt={`${personal.name} profile photo`}
+              className="h-full w-full object-cover"
+              priority
+            />
           </span>
           <span className="hidden sm:inline text-fg/80">{personal.name}</span>
         </a>

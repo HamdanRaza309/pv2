@@ -1,5 +1,7 @@
 import { ArrowUp, Facebook, Github, Instagram, Linkedin } from "lucide-react";
+import Image from "next/image";
 import { personal } from "@/lib/data";
+import hamdanPhoto from "@/assets/hamdan.png";
 
 export function Footer() {
   const year = new Date().getFullYear();
@@ -12,8 +14,12 @@ export function Footer() {
               href="#top"
               className="flex items-center gap-2 font-mono text-sm"
             >
-              <span className="grid h-8 w-8 place-items-center rounded-full border border-fg/20">
-                {personal.initials}
+              <span className="grid h-8 w-8 place-items-center rounded-full border border-fg/20 overflow-hidden">
+                <Image
+                  src={hamdanPhoto}
+                  alt={`${personal.name} profile photo`}
+                  className="h-full w-full object-cover"
+                />
               </span>
               <span>{personal.name}</span>
             </a>

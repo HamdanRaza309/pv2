@@ -1,7 +1,7 @@
 export const personal = {
   name: "Hamdan Raza",
   initials: "HR",
-  role: "Junior Full-Stack Web Developer",
+  role: "Full-Stack Web Developer",
   tagline: "I build full-stack web apps, ship clean code.",
   intro:
     "Full-stack developer based in Peshawar, Pakistan. I build scalable web applications with the MERN stack and integrate AI features into modern production software.",
@@ -50,7 +50,7 @@ export const experience = [
     company: "Freelance / Independent",
     type: "Full-Stack Developer",
     range: "2024 — Present",
-    title: "Junior Full-Stack Web Developer",
+    title: "Full-Stack Web Developer",
     location: "Peshawar, PK",
     intro:
       "Building full-stack web applications integrated with AI features and tools for clients and personal projects.",

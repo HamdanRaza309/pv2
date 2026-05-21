@@ -24,9 +24,9 @@ const mono = Fira_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Hamdan Raza — Junior Full-Stack Web Developer | Portfolio",
+  title: "Hamdan Raza — Full-Stack Web Developer | Portfolio",
   description:
-    "Junior Full-Stack Web Developer based in Peshawar, Pakistan. Building MERN-stack web apps integrated with AI features. React, Next.js, Node.js, MongoDB.",
+    "Full-Stack Web Developer based in Peshawar, Pakistan. Building MERN-stack web apps integrated with AI features. React, Next.js, Node.js, MongoDB.",
   keywords: [
     "Hamdan Raza",
     "Full-Stack Developer",
@@ -38,7 +38,7 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: "Hamdan Raza" }],
   openGraph: {
-    title: "Hamdan Raza — Junior Full-Stack Web Developer",
+    title: "Hamdan Raza — Full-Stack Web Developer",
     description:
       "MERN-stack full-stack developer based in Peshawar. Building production web apps with React, Node.js and AI integration.",
     type: "website",
