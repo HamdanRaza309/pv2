@@ -9,7 +9,7 @@ export const personal = {
   availability: "Available for work",
   email: "hamdanraza309@gmail.com",
   resume:
-    "https://drive.google.com/file/d/15tiEpOzEBNd04lL56NNAFqt9zLpZ-h9T/view?usp=sharing",
+    "https://drive.google.com/file/d/178klwYn9oFh-ZX7VxGoy0om0ZRGFGXjX/view?usp=sharing",
   socials: {
     github: "https://github.com/HamdanRaza309",
     linkedin: "https://www.linkedin.com/in/hamdanraza/",
