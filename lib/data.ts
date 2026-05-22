@@ -9,7 +9,7 @@ export const personal = {
   availability: "Available for work",
   email: "hamdanraza309@gmail.com",
   resume:
-    "https://drive.google.com/file/d/1b09PLu_V_CARXeeC9WnG3TYQG65weDtB/view?usp=sharing",
+    "https://drive.google.com/file/d/15tiEpOzEBNd04lL56NNAFqt9zLpZ-h9T/view?usp=sharing",
   socials: {
     github: "https://github.com/HamdanRaza309",
     linkedin: "https://www.linkedin.com/in/hamdanraza/",
@@ -41,6 +41,7 @@ export const techStack = [
       "Tailwind CSS",
       "Bootstrap",
       "SASS",
+      "Shopify Polaris",
     ],
   },
   {
@@ -58,6 +59,9 @@ export const techStack = [
       "SAML 2.0",
       "Microsoft Entra ID",
       "Microservices Architecture",
+      "Shopify Embedded Apps",
+      "Shopify APIs",
+      "Webhooks",
     ],
   },
   {
@@ -108,7 +112,7 @@ export const techStack = [
       "Java",
       "C++",
       "Solidity",
-      "Metamask",
+      "MetaMask",
     ],
   },
 ];
