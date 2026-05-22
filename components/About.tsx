@@ -29,7 +29,7 @@ export function About() {
             <Reveal delay={0.3}>
               <div className="pt-4 grid grid-cols-2 sm:grid-cols-4 gap-6 border-t border-fg/10 mt-8">
                 <Stat label="Years" value="2+" />
-                <Stat label="Projects" value="10+" />
+                <Stat label="Projects" value="15+" />
                 <Stat label="Stack" value="MERN" />
                 <Stat label="Based in" value="Peshawar" />
               </div>

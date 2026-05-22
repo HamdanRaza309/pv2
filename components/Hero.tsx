@@ -26,8 +26,8 @@ export function Hero() {
 
         <h1 className="h-display max-w-5xl animate-slide-up">
           I&apos;m a{" "}
-          <span className="text-accent">Full-Stack Developer</span>.
-          <br />I build <span className="text-accent">MERN apps</span>, ship{" "}
+          <span className="text-accent">Full-Stack AI Engineer</span>.
+          <span /> I build <span className="text-accent">MERN apps</span>, ship{" "}
           <span className="text-accent">production code</span>.
         </h1>
 
