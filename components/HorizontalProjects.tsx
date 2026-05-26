@@ -184,7 +184,7 @@ export function HorizontalProjects() {
                 key={p.title}
                 className="w-[85vw] sm:w-[80vw] md:w-[80vw] lg:w-[70vw] xl:w-[60vw] h-full flex items-center px-6 sm:px-12"
               >
-                <article className="w-full h-[200px] sm:h-[300px] rounded-3xl border border-fg/15 bg-card p-3 sm:px-12 sm:py-4 relative overflow-hidden flex flex-col">
+                <article className="w-full h-[400px] md:h-[600px] lg:h-[300px] rounded-3xl border border-fg/15 bg-card p-3 sm:px-12 sm:py-4 relative overflow-hidden flex flex-col">
                   <div
                     className="absolute -top-24 -right-24 w-80 h-80 rounded-full bg-accent/10 blur-3xl pointer-events-none"
                     aria-hidden
