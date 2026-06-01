@@ -67,7 +67,7 @@ export function Hero() {
             {personal.location}
           </span>
           <span className="hidden sm:inline opacity-40">/</span>
-          <span>Open to remote</span>
+          <span>Open to remote work</span>
         </div>
 
         <a
