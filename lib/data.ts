@@ -28,14 +28,14 @@ export const about = {
 
 export const techStack = [
   {
-    category: "Frontend",
+    category: "Frontend Development",
     items: [
       "React.js",
       "Next.js",
-      "Redux",
-      "Context API",
       "TypeScript",
       "JavaScript",
+      "Redux",
+      "Context API",
       "HTML",
       "CSS",
       "Tailwind CSS",
@@ -44,56 +44,64 @@ export const techStack = [
       "Shopify Polaris",
     ],
   },
+
   {
-    category: "Backend",
+    category: "Backend & API Development",
     items: [
       "Node.js",
       "Express.js",
       "Nest.js",
       "FastAPI",
+      "Python",
       "REST APIs",
       "GraphQL",
-      "Python",
+      "WebSockets",
+      "Microservices Architecture",
+      "Event-Driven Architecture",
+    ],
+  },
+
+  {
+    category: "Authentication & Security",
+    items: [
       "JWT Authentication",
       "OAuth 2.0",
       "SAML 2.0",
       "Microsoft Entra ID",
-      "Microservices Architecture",
-      "Shopify Embedded Apps",
-      "Shopify APIs",
-      "Webhooks",
     ],
   },
+
   {
-    category: "Database & Storage",
+    category: "Databases & Data Infrastructure",
     items: [
       "PostgreSQL",
       "MongoDB",
       "Mongoose",
-      "Supabase",
       "Redis",
+      "Supabase",
       "Pinecone",
       "ChromaDB",
       "Vector Databases",
     ],
   },
+
   {
-    category: "AI & Automation",
+    category: "AI Engineering & LLM Applications",
     items: [
+      "OpenAI APIs",
       "LangChain",
       "LlamaIndex",
       "RAG Systems",
-      "OpenAI APIs",
       "Generative AI",
       "Voice AI",
-      "AI Automation",
       "Semantic Search",
       "Embedding Optimization",
-      "n8n",
+      "AI Automation",
     ],
   },
+
   {
-    category: "Cloud, DevOps & Tools",
+    category: "Cloud, DevOps & Developer Tools",
     items: [
       "Docker",
       "Git",
@@ -102,15 +110,41 @@ export const techStack = [
       "Postman",
       "Vercel",
       "VS Code",
-      "WebSockets",
-      "Event-Driven Architecture",
     ],
   },
+
   {
-    category: "Others",
+    category: "Automation & Workflow Orchestration",
     items: [
+      "n8n",
+      "Webhooks",
+    ],
+  },
+
+  {
+    category: "Shopify Development",
+    items: [
+      "Shopify Embedded Apps",
+      "Shopify APIs",
+      "Shopify Polaris",
+    ],
+  },
+
+  {
+    category: "Programming Languages",
+    items: [
+      "JavaScript",
+      "TypeScript",
+      "Python",
       "Java",
       "C++",
+      "Solidity",
+    ],
+  },
+
+  {
+    category: "Blockchain Development",
+    items: [
       "Solidity",
       "MetaMask",
     ],
