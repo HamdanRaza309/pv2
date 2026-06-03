@@ -50,7 +50,7 @@ export function Cursor() {
       <motion.div
         aria-hidden
         style={{ x: springX, y: springY }}
-        className="pointer-events-none fixed left-0 top-0 z-[90]"
+        className="pointer-events-none fixed left-0 top-0 z-[110]"
       >
         <motion.div
           animate={{
@@ -71,7 +71,7 @@ export function Cursor() {
       <motion.div
         aria-hidden
         style={{ x, y }}
-        className="pointer-events-none fixed left-0 top-0 z-[91]"
+        className="pointer-events-none fixed left-0 top-0 z-[111]"
       >
         <motion.div
           animate={{ scale: hovering ? 0 : 1 }}
