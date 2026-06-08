@@ -61,7 +61,7 @@ export function Hero() {
             </div>
 
             <div
-              className="mt-16 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-muted animate-fade-in font-mono"
+              className="mt-14 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-muted animate-fade-in font-mono"
               style={{ animationDelay: "320ms" }}
             >
               <span className="inline-flex items-center gap-1.5">
