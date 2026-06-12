@@ -60,7 +60,7 @@ export function Navbar() {
             href="#contact"
             className="hidden sm:inline-flex btn-primary text-xs px-4 py-2"
           >
-            Get in touch
+            Drop a Line
           </a>
           <button
             type="button"
@@ -91,7 +91,7 @@ export function Navbar() {
               onClick={() => setOpen(false)}
               className="btn-primary w-fit text-xs px-4 py-2 mt-1"
             >
-              Get in touch
+            Drop a Line
             </a>
           </nav>
         </div>
