@@ -23,6 +23,7 @@ export const about = {
     "I'm a Full-Stack AI Engineer with a focus on the MERN stack. I started by building small JavaScript projects (games, utilities, clocks) and grew into shipping production-grade React apps and Node.js APIs.",
     "Currently I work on full-stack web applications integrated with AI features and tools — combining clean frontend interfaces with reliable backend services.",
     "My approach: write code that's simple to read, easy to ship, and built to scale. I use AI tools to move faster, not to skip the thinking.",
+    "Research Interest: I'm passionate about NeuroAI, Brain-Computer Interfaces (BCIs), and Neural Engineering. My interests include neural signal processing, computational neuroscience, neuroprosthetics, and the application of machine learning to decode brain activity and develop intelligent human–machine interfaces."
   ],
 };
 
