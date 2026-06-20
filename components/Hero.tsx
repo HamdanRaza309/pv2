@@ -1,5 +1,7 @@
+import Image from "next/image";
 import { ArrowDown, ArrowUpRight, MapPin } from "lucide-react";
 import { personal } from "@/lib/data";
+import hamdanPhoto from "@/assets/hamdan.png";
 
 export function Hero() {
   return (
@@ -75,8 +77,8 @@ export function Hero() {
 
           <div className="hidden md:flex justify-end items-start self-start animate-fade-in" style={{ animationDelay: "220ms" }}>
             <div className="relative w-full max-w-[360px] overflow-hidden rounded-[2rem] border border-white/10 bg-slate-950/70 shadow-xl shadow-slate-950/20">
-              <img
-                src="/assets/hamdan.png"
+              <Image
+                src={hamdanPhoto}
                 alt="Hamdan"
                 className="h-auto w-full object-cover"
               />
