@@ -44,6 +44,22 @@ export function Contact() {
               >
                 GitHub <ArrowUpRight className="h-4 w-4" />
               </a>
+              <a
+                href={personal.socials.facebook}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-secondary"
+              >
+                Facebook <ArrowUpRight className="h-4 w-4" />
+              </a>
+              <a
+                href={personal.socials.instagram}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-secondary"
+              >
+                Instagram <ArrowUpRight className="h-4 w-4" />
+              </a>
             </div>
 
             <div className="mt-10 pt-8 border-t border-fg/10 grid sm:grid-cols-3 gap-6 text-sm">
