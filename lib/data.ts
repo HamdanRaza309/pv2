@@ -246,6 +246,7 @@ export const services = [
 export const projects = [
   {
 title: "Look Atlas",
+slug: "look-atlas",
 category: "AI Commerce Infrastructure",
 description:
 "Architected and shipped a production AI content engine for ecommerce that orchestrates product and model ingestion, shot planning, image/video generation, and paid-download delivery through Fastify APIs + BullMQ workers, backed by Supabase Auth/Postgres/RLS/Storage, Stripe-driven subscription and credit-ledger automation with idempotent webhook handling, abuse-resistant trial controls, calibration pipelines, and multi-provider generation flows across Gemini, OpenAI, and Veo with deployment split across Railway/Render/Vercel and an embedded Shopify app surface.",
@@ -276,6 +277,7 @@ featured: true,
 },
 {
   title: "Climate Tracker Initiative",
+  slug: "climate-tracker-initiative",
   category: "Full-Stack · AI · SaaS",
   description:
     "Engineered an AI-powered ESG data platform utilizing autonomous web agents and LLM extraction pipelines to ingest, structure, and audit corporate sustainability metrics from multi-page PDFs, integrated with enterprise Entra ID SSO.",
@@ -298,7 +300,7 @@ featured: true,
   github: null,
   featured: true,
 },
-{ title: "Inhalo: Distributed AI Short-Form Content Engine", category: "Full-Stack & AI Infrastructure", description: "Architected and shipped a distributed, queue-based content automation system that dynamically generates short-form video assets, slideshows, and interactive breathing challenges. Built an agent-centric Python FastAPI service utilizing Gemini, Claude, and ElevenLabs TTS to generate scripts, layout configurations, and voiceovers, integrated with an Express and BullMQ worker queue to isolate and scale heavy FFmpeg/MoviePy video rendering jobs. Engineered a real-time progress-tracking dashboard with React, Supabase, and Redis, enabling seamless pipeline orchestration and template management.", tech: [ "React", "TailwindCSS", "Node.js", "Express", "FastAPI", "BullMQ", "Redis", "Supabase", "Gemini API", "ElevenLabs", "FFmpeg", "MoviePy" ], live: "https://content-automation-puce.vercel.app/", github: null, featured: true, },
+{ title: "Inhalo: Distributed AI Short-Form Content Engine", slug: "inhalo", category: "Full-Stack & AI Infrastructure", description: "Architected and shipped a distributed, queue-based content automation system that dynamically generates short-form video assets, slideshows, and interactive breathing challenges. Built an agent-centric Python FastAPI service utilizing Gemini, Claude, and ElevenLabs TTS to generate scripts, layout configurations, and voiceovers, integrated with an Express and BullMQ worker queue to isolate and scale heavy FFmpeg/MoviePy video rendering jobs. Engineered a real-time progress-tracking dashboard with React, Supabase, and Redis, enabling seamless pipeline orchestration and template management.", tech: [ "React", "TailwindCSS", "Node.js", "Express", "FastAPI", "BullMQ", "Redis", "Supabase", "Gemini API", "ElevenLabs", "FFmpeg", "MoviePy" ], live: "https://content-automation-puce.vercel.app/", github: null, featured: true, },
   {
     title: "Cozy Craze",
     category: "Full-Stack · E-commerce",
@@ -340,6 +342,130 @@ featured: true,
     featured: false,
   },
 ];
+
+export interface ProjectDetail {
+  categoryLong: string;
+  problem: string;
+  solution: string;
+  contributions: string[];
+  features: { title: string; description: string; icon?: string }[];
+  metrics: { value: string; label: string }[];
+  techStack: {
+    frontend?: string[];
+    backend?: string[];
+    database?: string[];
+    cloud?: string[];
+  };
+  gallery?: { src: string; alt: string; caption: string }[];
+}
+
+export const projectDetails: Record<string, ProjectDetail> = {
+  "Look Atlas": {
+    categoryLong: "AI Commerce Infrastructure",
+    problem: "eCommerce brands struggle to produce high-end product photography on diverse models and in varying settings. Traditional studios are slow and expensive, while simple AI image generators lack control, ingestion calibration, and consistency.",
+    solution: "Developed a production-grade AI content generation engine. By orchestrating product and model ingestion calibration with multi-provider APIs (Veo, Gemini, OpenAI), the system delivers high-quality assets through isolated task workers, integrated with Shopify and Stripe.",
+    contributions: [
+      "Architected the distributed task orchestration pipeline with Fastify, BullMQ, and Redis for heavy background media generation.",
+      "Built multi-provider generation endpoints integrating Google Gemini, OpenAI, and Google Veo pipelines.",
+      "Implemented Stripe subscription tiers, usage credit ledgers, and idempotent webhook handlers with transaction safety.",
+      "Engineered data persistence, secure asset storage, and schema definitions with Supabase (PostgreSQL, Auth, RLS).",
+      "Designed and deployed the embedded Shopify app surface using App Bridge, React Router, and Tailwind CSS."
+    ],
+    features: [
+      { title: "Multi-Provider Generative AI", description: "Orchestrates API calls across OpenAI, Gemini, and Veo to leverage the best models for image, text, and video creation.", icon: "Sparkles" },
+      { title: "Distributed Queue Architecture", description: "Utilizes Fastify + BullMQ + Redis to isolate heavy media rendering and calibration jobs, maintaining API responsiveness.", icon: "Cpu" },
+      { title: "Shopify App Integration", description: "Seamlessly embeds into Shopify admin dashboards using App Bridge, providing store owners with native controls.", icon: "Layers" },
+      { title: "Subscription & Ledger System", description: "Implements secure Stripe checkout, automated credit resets, and real-time usage auditing.", icon: "Compass" }
+    ],
+    metrics: [
+      { value: "99.9%", label: "Pipeline Uptime" },
+      { value: "3+", label: "GenAI Providers" },
+      { value: "100%", label: "Webhook Idempotency" }
+    ],
+    techStack: {
+      frontend: ["React.js", "Vite", "Tailwind CSS", "Shopify App Bridge", "React Router"],
+      backend: ["Node.js", "Fastify", "BullMQ", "Redis"],
+      database: ["Supabase PostgreSQL", "RLS Policies", "Supabase Storage"],
+      cloud: ["Railway", "Render", "Vercel", "Docker"]
+    },
+    gallery: [
+      { src: "/assets/lookatlas/user_dashboard.png", alt: "User Dashboard", caption: "Personalized dashboard for managing reviews, analytics, and account settings." },
+      { src: "/assets/lookatlas/what_they_say_about_us.png", alt: "What They Say About Us", caption: "Customer testimonials section showcasing user feedback and success stories." },
+      { src: "/assets/lookatlas/shoot_creation.png", alt: "Shoot Creation", caption: "Shoot creation and management dashboard for managing and scheduling shoots." },
+    ]
+  },
+  "Climate Tracker Initiative": {
+    categoryLong: "Full-Stack · AI · SaaS",
+    problem: "Corporations and financial institutions spend hundreds of hours manually reviewing, extracting, and auditing ESG sustainability metrics from long, messy, unstructured PDF disclosure reports.",
+    solution: "Engineered an AI-powered ESG data platform. It leverages autonomous web agents, custom Puppeteer scripts, and LLM-powered RAG pipelines to automatically ingest, parse, structure, and verify corporate environmental compliance data.",
+    contributions: [
+      "Built autonomous document parsing and LLM metadata extraction pipelines using LangChain and OpenAI APIs.",
+      "Created highly stable Puppeteer scripts to scrape and extract clean text from multi-page corporate PDFs.",
+      "Designed a robust queuing mechanism with Redis and Bull to scale heavy ingestion and processing tasks.",
+      "Integrated enterprise-grade Single Sign-On (SSO) authentication using Microsoft Entra ID (Azure AD) and SAML 2.0.",
+      "Developed a modern, responsive audit dashboard in React + Vite with Tailwind CSS for manual metric verification."
+    ],
+    features: [
+      { title: "Autonomous Document Extraction", description: "Parses complex tables and narrative text in corporate disclosures, turning messy documents into audit-ready JSON data.", icon: "Sparkles" },
+      { title: "Enterprise Entra ID SSO", description: "Secures user access with Single Sign-On, supporting Microsoft Entra ID and corporate authentication policies.", icon: "Layers" },
+      { title: "Ingestion Queue System", description: "Background queue architecture using Bull and Redis keeps the application responsive during heavy ingestion loads.", icon: "Cpu" },
+      { title: "ESG Audit Ledger", description: "Provides visual audit trails highlighting exactly where in the source PDF each metric was extracted from.", icon: "Compass" }
+    ],
+    metrics: [
+      { value: "42%", label: "Ingestion Speedup" },
+      { value: "10k+", label: "Multi-page PDFs Parsed" },
+      { value: "100%", label: "Traceable Data Points" }
+    ],
+    techStack: {
+      frontend: ["React.js", "TypeScript", "Vite", "Tailwind CSS"],
+      backend: ["Node.js", "Express.js", "LangChain", "Puppeteer"],
+      database: ["PostgreSQL", "Supabase", "Redis", "Bull"],
+      cloud: ["Vercel"]
+    },
+    gallery: [
+      { src: "/assets/climatetrackerinitiative/how_we_verify.png", alt: "How We Verify", caption: "Source-linked data verification interface showing exact page and paragraph references for every extracted metric." },
+      { src: "/assets/climatetrackerinitiative/esg_audit_ledger.png", alt: "ESG Audit Ledger", caption: "Structured audit dashboard displaying compliance metrics with full traceability back to source documents." },
+      { src: "/assets/climatetrackerinitiative/how_flawless_accuracy_is_reached.png", alt: "Accuracy Pipeline", caption: "AI-assisted extraction pipeline with human-in-the-loop validation for high-fidelity ESG data." },
+    ]
+  },
+  "Inhalo: Distributed AI Short-Form Content Engine": {
+    categoryLong: "Full-Stack & AI Infrastructure",
+    problem: "Content creators spend significant resources scriptwriting, voiceacting, and manually editing short-form videos. Rendering video assets locally is slow and scales poorly under concurrent request loads.",
+    solution: "Designed a distributed, queue-based content automation engine. Users configure layouts and generate scripts via a React dashboard, which drives a FastAPI media rendering service leveraging Gemini, Claude, ElevenLabs, and MoviePy/FFmpeg.",
+    contributions: [
+      "Architected the distributed media rendering microservices using Express, BullMQ, and Redis to isolate rendering resource load.",
+      "Built a FastAPI background worker leveraging MoviePy and FFmpeg to compose high-definition video assets programmatically.",
+      "Integrated Gemini and Claude APIs to generate dynamic, contextual scripts, prompts, and layout configs.",
+      "Connected ElevenLabs TTS API to synthesize lifelike voiceovers synced precisely with the video timeline.",
+      "Created a real-time progress-tracking dashboard with React, Tailwind CSS, Supabase, and Redis WebSockets."
+    ],
+    features: [
+      { title: "Programmatic Video Composing", description: "Composes scripts, audio voiceovers, subtitles, and backgrounds into short-form videos using MoviePy and FFmpeg.", icon: "Sparkles" },
+      { title: "AI Scripting & TTS Synthesis", description: "Generates high-retention video hooks and narrations via Gemini/Claude and ElevenLabs speech synthesis.", icon: "Layers" },
+      { title: "Resource Isolation", description: "Decouples heavy media processing from API endpoints using BullMQ background workers for horizontal scaling.", icon: "Cpu" },
+      { title: "Real-time Processing Tracker", description: "Employs WebSockets and Supabase listeners to display granular processing steps to the user in real-time.", icon: "Compass" }
+    ],
+    metrics: [
+      { value: "100%", label: "Automated Generation" },
+      { value: "Sync", label: "Timeline Audio Sync" },
+      { value: "Isolated", label: "Render queue isolation" }
+    ],
+    techStack: {
+      frontend: ["React.js", "Tailwind CSS", "WebSockets"],
+      backend: ["FastAPI", "Python", "Node.js", "Express.js", "BullMQ"],
+      database: ["Supabase", "Redis"],
+      cloud: ["MoviePy", "FFmpeg", "Vercel"]
+    }
+  }
+};
+
+export function getProjectBySlug(slug: string) {
+  return projects.find((p) => p.slug === slug) ?? null;
+}
+
+export function getProjectDetail(title: string): ProjectDetail | null {
+  return projectDetails[title] ?? null;
+}
 
 export const nav = [
   { label: "About", href: "#about" },
