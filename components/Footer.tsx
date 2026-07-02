@@ -2,9 +2,9 @@ import { ArrowUp, Facebook, Github, Instagram, Linkedin } from "lucide-react";
 import Image from "next/image";
 import { personal } from "@/lib/data";
 import hamdanPhoto from "@/assets/hamdan.png";
+import { CopyrightYear } from "./CopyrightYear";
 
 export function Footer() {
-  const year = new Date().getFullYear();
   return (
     <footer className="border-t border-fg/10">
       <div className="container-x py-12">
@@ -90,7 +90,7 @@ export function Footer() {
 
         <div className="mt-12 pt-6 border-t border-fg/10 flex flex-wrap items-center justify-between gap-4">
           <div className="font-mono text-xs text-muted">
-            © {year} {personal.name}. All rights reserved.
+            © <CopyrightYear /> {personal.name}. All rights reserved.
           </div>
           <a
             href="#top"

@@ -76,11 +76,13 @@ export function Hero() {
           </div>
 
           <div className="hidden md:flex justify-end items-start self-start animate-fade-in" style={{ animationDelay: "220ms" }}>
-            <div className="relative w-full max-w-[360px] overflow-hidden rounded-[2rem] border border-white/10 bg-slate-950/70 shadow-xl shadow-slate-950/20">
+            <div className="relative w-full max-w-[360px] aspect-[3/4] overflow-hidden rounded-[2rem] border border-white/10 bg-slate-950/70 shadow-xl shadow-slate-950/20">
               <Image
                 src={hamdanPhoto}
                 alt="Hamdan"
-                className="h-auto w-full object-cover"
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, 360px"
               />
             </div>
           </div>
