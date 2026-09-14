@@ -1,53 +1,92 @@
-import { about } from "@/lib/data";
+import Image from "next/image";
+import { about, experience, personal, projects } from "@/lib/data";
+import hamdanVisionCutout from "@/assets/hamdan_vision_cutout.png";
 import { Reveal } from "./Reveal";
 
 export function About() {
+  // Compute stats strictly from real data
+  const totalProjects = projects.length;
+
+  // Calculate actual years active from earliest experience entry (01/2024)
+  const earliestYear = Math.min(
+    ...experience.map((e) => {
+      const match = e.range.match(/\b(20\d{2})\b/);
+      return match ? parseInt(match[1], 10) : 2024;
+    })
+  );
+  const yearsActive = Math.max(1, new Date().getFullYear() - earliestYear);
+
   return (
-    <section id="about" className="section">
+    <section id="about" className="section bg-bg">
       <div className="container-x">
-        <div className="grid md:grid-cols-12 gap-10">
-          <div className="md:col-span-4">
-            <Reveal>
-              <div className="flex items-baseline gap-4">
-                <span className="section-num-big">01</span>
-                <span className="eyebrow">Who I Am</span>
+        <div className="grid lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+          {/* Left Column: Heading, Bio paragraphs, and Stacked Stat Callouts */}
+          <div className="lg:col-span-7 flex flex-col justify-between">
+            <div>
+              <Reveal>
+                <div className="eyebrow mb-3">About · Vision</div>
+                <h2 className="section-title">
+                  TURNING MY VISION
+                </h2>
+              </Reveal>
+
+              <div className="mt-8 space-y-5 text-fg/80 leading-relaxed text-sm sm:text-base">
+                {about.paragraphs.map((p, i) => (
+                  <Reveal key={i} delay={0.05 + i * 0.06}>
+                    <p>{p}</p>
+                  </Reveal>
+                ))}
               </div>
-              <h2 className="mt-6 font-display font-bold text-3xl sm:text-4xl tracking-tight leading-[1.1]">
-                A developer who likes <span className="text-accent">shipping</span>, not just{" "}
-                <span className="text-accent">talking</span>.
-              </h2>
-            </Reveal>
+            </div>
+
+            {/* Two large stat callouts stacked vertically as in reference design */}
+            <div className="mt-14 pt-10 border-t border-fg/10 flex flex-col sm:flex-row lg:flex-col gap-8 sm:gap-16 lg:gap-8">
+              <Reveal delay={0.25}>
+                <div className="flex flex-col">
+                  <span className="font-display font-bold text-6xl sm:text-7xl md:text-8xl tracking-tight text-fg leading-none">
+                    {totalProjects}
+                  </span>
+                  <span className="mt-2 font-mono text-xs uppercase tracking-[0.2em] text-muted">
+                    Completed Projects
+                  </span>
+                </div>
+              </Reveal>
+
+              <Reveal delay={0.32}>
+                <div className="flex flex-col">
+                  <span className="font-display font-bold text-6xl sm:text-7xl md:text-8xl tracking-tight text-fg leading-none">
+                    {yearsActive}+
+                  </span>
+                  <span className="mt-2 font-mono text-xs uppercase tracking-[0.2em] text-muted">
+                    Years Active
+                  </span>
+                </div>
+              </Reveal>
+            </div>
           </div>
 
-          <div className="md:col-span-8 space-y-5 text-fg/80 leading-relaxed text-[17px]">
-            {about.paragraphs.map((p, i) => (
-              <Reveal key={i} delay={0.05 + i * 0.08}>
-                <p>{p}</p>
-              </Reveal>
-            ))}
-
-            <Reveal delay={0.3}>
-              <div className="pt-4 grid grid-cols-2 sm:grid-cols-4 gap-6 border-t border-fg/10 mt-8">
-                <Stat label="Years" value="2+" />
-                <Stat label="Projects" value="15+" />
-                <Stat label="Stack" value="MERN" />
-                <Stat label="Based in" value="Peshawar" />
+          {/* Right Column: Distinct Photo Card — NO duplicate hero crop, NO black box */}
+          <div className="lg:col-span-5">
+            <Reveal delay={0.2}>
+              <div className="relative w-full aspect-[4/5] overflow-hidden rounded-[2.5rem] border border-fg/10 bg-gradient-to-b from-[#FAF2E7] to-[#F7E5CF] dark:from-neutral-900 dark:to-neutral-950 p-6 sm:p-8 flex items-center justify-center shadow-lg">
+                <div className="relative w-full h-full flex items-center justify-center">
+                  <Image
+                    src={hamdanVisionCutout}
+                    alt={`${personal.name} portrait`}
+                    fill
+                    className="object-contain object-bottom filter contrast-[1.02]"
+                    style={{
+                      maskImage: "linear-gradient(to bottom, black 85%, transparent 100%)",
+                      WebkitMaskImage: "linear-gradient(to bottom, black 85%, transparent 100%)",
+                    }}
+                    sizes="(max-width: 1024px) 100vw, 480px"
+                  />
+                </div>
               </div>
             </Reveal>
           </div>
         </div>
       </div>
     </section>
-  );
-}
-
-function Stat({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="pt-6">
-      <div className="font-display font-bold text-3xl tracking-tight">{value}</div>
-      <div className="font-mono text-[11px] uppercase tracking-widest text-muted mt-1">
-        {label}
-      </div>
-    </div>
   );
 }

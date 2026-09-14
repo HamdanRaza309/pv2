@@ -1,9 +1,9 @@
 import { Navbar } from "@/components/Navbar";
 import { Hero } from "@/components/Hero";
 import { About } from "@/components/About";
-import { TechStack } from "@/components/TechStack";
-import { Experience } from "@/components/Experience";
 import { Services } from "@/components/Services";
+import { Experience } from "@/components/Experience";
+import { TechStack } from "@/components/TechStack";
 import { HorizontalProjects } from "@/components/HorizontalProjects";
 import { MoreBuilds } from "@/components/MoreBuilds";
 import { Contact } from "@/components/Contact";
@@ -20,9 +20,9 @@ export default function Home() {
       <main>
         <Hero />
         <About />
-        <TechStack />
-        <Experience />
         <Services />
+        <Experience />
+        <TechStack />
         <HorizontalProjects />
         <MoreBuilds />
         <Contact />

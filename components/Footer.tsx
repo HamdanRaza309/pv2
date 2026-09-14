@@ -1,61 +1,54 @@
 import { ArrowUp, Facebook, Github, Instagram, Linkedin } from "lucide-react";
-import Image from "next/image";
 import { personal } from "@/lib/data";
-import hamdanPhoto from "@/assets/hamdan.png";
 import { CopyrightYear } from "./CopyrightYear";
 
 export function Footer() {
   return (
-    <footer className="border-t border-fg/10">
-      <div className="container-x py-12">
-        <div className="grid md:grid-cols-3 gap-10">
-          <div>
+    <footer className="bg-bg">
+      <div className="container-x py-16 sm:py-20">
+        <div className="grid md:grid-cols-12 gap-10 items-start">
+          {/* Brand Info */}
+          <div className="md:col-span-5">
             <a
               href="#top"
-              className="flex items-center gap-2 font-mono text-sm"
+              className="inline-block transition-opacity hover:opacity-80"
             >
-              <span className="grid h-8 w-8 place-items-center rounded-full border border-fg/20 overflow-hidden">
-                <Image
-                  src={hamdanPhoto}
-                  alt={`${personal.name} profile photo`}
-                  className="h-full w-full object-cover"
-                />
+              <span className="font-serif italic text-3xl font-medium text-fg">
+                {personal.name.split(" ")[0]}.
               </span>
-              <span>{personal.name}</span>
             </a>
-            <p className="mt-4 text-sm text-muted max-w-xs leading-relaxed">
-              {personal.role} · Peshawar, PK · Open to remote.
+            <p className="mt-4 text-xs sm:text-sm text-muted max-w-sm leading-relaxed">
+              {personal.role} · {personal.location.split(",")[0]}, PK · Open to remote work.
             </p>
           </div>
 
-          <div>
-            <div className="eyebrow mb-4">Navigate</div>
-            <nav className="flex flex-col gap-2 text-sm">
-              <a href="#about" className="text-fg/70 hover:text-fg transition">
+          {/* Navigation */}
+          <div className="md:col-span-3">
+            <div className="eyebrow mb-4">Navigation</div>
+            <nav className="flex flex-col gap-2.5 text-xs sm:text-sm">
+              <a href="#about" className="text-fg/70 hover:text-fg transition-colors">
                 About
               </a>
-              <a href="#stack" className="text-fg/70 hover:text-fg transition">
-                Tech Stack
+              <a href="#services" className="text-fg/70 hover:text-fg transition-colors">
+                Services
               </a>
-              <a
-                href="#experience"
-                className="text-fg/70 hover:text-fg transition"
-              >
+              <a href="#experience" className="text-fg/70 hover:text-fg transition-colors">
                 Experience
               </a>
-              <a
-                href="#projects"
-                className="text-fg/70 hover:text-fg transition"
-              >
-                Projects
+              <a href="#stack" className="text-fg/70 hover:text-fg transition-colors">
+                Tech Stack
               </a>
-              <a href="#contact" className="text-fg/70 hover:text-fg transition">
+              <a href="#projects" className="text-fg/70 hover:text-fg transition-colors">
+                Recent Projects
+              </a>
+              <a href="#contact" className="text-fg/70 hover:text-fg transition-colors">
                 Contact
               </a>
             </nav>
           </div>
 
-          <div>
+          {/* Socials & Email */}
+          <div className="md:col-span-4">
             <div className="eyebrow mb-4">Connect</div>
             <div className="flex gap-2">
               <Social
@@ -81,22 +74,24 @@ export function Footer() {
             </div>
             <a
               href={`mailto:${personal.email}`}
-              className="mt-4 inline-block text-sm text-fg/70 hover:text-fg transition link-underline"
+              className="mt-6 inline-block font-mono text-xs text-fg/80 hover:text-fg transition-colors link-underline"
             >
               {personal.email}
             </a>
           </div>
         </div>
 
-        <div className="mt-12 pt-6 border-t border-fg/10 flex flex-wrap items-center justify-between gap-4">
+        {/* Bottom Bar */}
+        <div className="mt-14 pt-8 border-t border-fg/10 flex flex-wrap items-center justify-between gap-4">
           <div className="font-mono text-xs text-muted">
             © <CopyrightYear /> {personal.name}. All rights reserved.
           </div>
           <a
             href="#top"
-            className="inline-flex items-center gap-2 font-mono text-xs text-muted hover:text-fg transition"
+            className="inline-flex items-center gap-1.5 font-mono text-xs text-muted hover:text-fg transition-colors"
           >
-            Back to top <ArrowUp className="h-3 w-3" />
+            <span>Back to top</span>
+            <ArrowUp className="h-3.5 w-3.5" />
           </a>
         </div>
       </div>
@@ -119,7 +114,7 @@ function Social({
       target="_blank"
       rel="noopener noreferrer"
       aria-label={label}
-      className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-fg/15 hover:bg-fg/5 hover:border-fg/30 transition"
+      className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-fg/15 text-fg/80 hover:text-fg hover:border-fg/40 hover:bg-fg/5 transition-all"
     >
       {icon}
     </a>

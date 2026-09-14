@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans, Syne, Fira_Mono } from "next/font/google";
+import { Plus_Jakarta_Sans, Oswald, Playfair_Display, Fira_Mono } from "next/font/google";
 import { Providers } from "./providers";
 import "./globals.css";
 
@@ -9,10 +9,18 @@ const sans = Plus_Jakarta_Sans({
   display: "swap",
 });
 
-const display = Syne({
+const display = Oswald({
   subsets: ["latin"],
-  weight: ["500", "600", "700", "800"],
+  weight: ["500", "600", "700"],
   variable: "--font-display",
+  display: "swap",
+});
+
+const serif = Playfair_Display({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  style: ["italic", "normal"],
+  variable: "--font-serif",
   display: "swap",
 });
 
@@ -53,7 +61,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${sans.variable} ${display.variable} ${mono.variable}`}
+      className={`${sans.variable} ${display.variable} ${serif.variable} ${mono.variable}`}
       suppressHydrationWarning
     >
       <body>

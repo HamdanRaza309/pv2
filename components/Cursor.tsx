@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 
 export function Cursor() {
   const [enabled, setEnabled] = useState(false);
+  const [visible, setVisible] = useState(false);
   const [hovering, setHovering] = useState(false);
 
   const x = useMotionValue(-100);
@@ -22,6 +23,7 @@ export function Cursor() {
     document.documentElement.classList.add("cursor-none-all");
 
     const onMove = (e: MouseEvent) => {
+      setVisible(true);
       x.set(e.clientX);
       y.set(e.clientY);
     };
@@ -42,7 +44,7 @@ export function Cursor() {
     };
   }, [x, y]);
 
-  if (!enabled) return null;
+  if (!enabled || !visible) return null;
 
   return (
     <>

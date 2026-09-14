@@ -78,7 +78,7 @@ export function Splash() {
             transition={{ duration: 0.5, delay: 1.6 }}
             className="mt-6 font-mono text-[10px] uppercase tracking-[0.3em] text-bg/50"
           >
-            Full-Stack Developer
+            Full-Stack AI Engineer
           </motion.div>
         </motion.div>
       )}

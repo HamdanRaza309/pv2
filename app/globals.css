@@ -4,23 +4,23 @@
 
 @layer base {
   :root {
-    --bg: 246 243 236;        /* #F6F3EC cream — matches reference */
-    --fg: 15 15 15;           /* near-black */
-    --muted: 120 113 102;
-    --accent: 249 156 0;      /* #F99C00 amber */
-    --accent-2: 21 93 252;    /* #155DFC blue */
-    --border: 15 15 15;
-    --card: 252 250 244;      /* slightly lighter cream */
+    --bg: 255 255 255;        /* Clean pure white base */
+    --fg: 10 10 10;           /* High-contrast ink black */
+    --muted: 115 115 115;     /* Neutral 500 */
+    --accent: 10 10 10;
+    --accent-warm: 245 158 11; /* Warm amber/peach for subtle hero accents */
+    --border: 229 229 229;    /* Crisp hairline border */
+    --card: 255 255 255;
   }
 
   .dark {
-    --bg: 12 12 12;           /* near-black */
-    --fg: 240 238 232;        /* warm white */
-    --muted: 150 145 135;
-    --accent: 255 180 80;     /* lighter amber for dark */
-    --accent-2: 100 160 255;
-    --border: 240 238 232;
-    --card: 22 22 22;
+    --bg: 10 10 10;           /* Clean dark base */
+    --fg: 245 245 245;        /* Crisp white text */
+    --muted: 163 163 163;
+    --accent: 255 255 255;
+    --accent-warm: 251 191 36;
+    --border: 38 38 38;
+    --card: 18 18 18;
   }
 
   * {
@@ -30,6 +30,7 @@
 
   html {
     scroll-behavior: smooth;
+    overflow-x: hidden;
   }
 
   body {
@@ -37,81 +38,82 @@
     color: rgb(var(--fg));
     font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
     transition: background-color 0.3s ease, color 0.3s ease;
+    overflow-x: hidden;
   }
 
   ::selection {
-    background: rgb(var(--accent) / 0.3);
-    color: rgb(var(--fg));
+    background: rgb(var(--fg));
+    color: rgb(var(--bg));
   }
 }
 
 @layer components {
   .container-x {
-    @apply mx-auto w-full max-w-6xl px-6 sm:px-8;
+    @apply mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8;
   }
 
+  /* Section styling with thin gray line separator after each section */
   .section {
-    @apply py-24 sm:py-32 border-t border-fg/15;
-  }
-
-  .section-num-big {
-    @apply font-display font-bold text-4xl sm:text-5xl text-fg/15 leading-none;
+    @apply py-16 sm:py-24 md:py-32 border-b border-fg/10;
   }
 
   .eyebrow {
-    @apply font-mono text-xs uppercase tracking-[0.18em] text-muted;
-  }
-
-  .section-num {
-    @apply font-mono text-sm text-accent tracking-widest;
+    @apply font-mono text-[11px] uppercase tracking-[0.2em] text-muted;
   }
 
   .h-display {
-    @apply font-display font-bold text-[40px] sm:text-6xl md:text-7xl leading-[1.02] tracking-[-0.02em];
+    @apply font-display font-bold uppercase tracking-tight leading-[0.95];
   }
 
+  .section-title {
+    @apply font-display font-bold uppercase tracking-tight text-3xl sm:text-4xl md:text-5xl text-fg leading-none;
+  }
+
+  /* Pill-shaped buttons throughout */
   .btn-primary {
-    @apply inline-flex items-center gap-2 rounded-full bg-fg text-bg px-5 py-2.5 text-sm font-medium hover:opacity-90 transition;
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-fg text-bg px-6 py-2.5 text-xs sm:text-sm font-medium hover:opacity-90 transition active:scale-[0.98];
   }
 
   .btn-secondary {
-    @apply inline-flex items-center gap-2 rounded-full border border-fg/20 px-5 py-2.5 text-sm font-medium hover:bg-fg/5 transition;
+    @apply inline-flex items-center justify-center gap-2 rounded-full border border-fg/20 bg-transparent text-fg px-6 py-2.5 text-xs sm:text-sm font-medium hover:bg-fg/5 transition active:scale-[0.98];
   }
 
+  /* Pill-shaped badges throughout */
   .badge {
-    @apply inline-flex items-center rounded-full border border-fg/15 bg-fg/5 px-2.5 py-1 font-mono text-[11px] uppercase tracking-wider text-muted;
+    @apply inline-flex items-center gap-2 rounded-full border border-fg/15 bg-card/90 backdrop-blur-sm px-3.5 py-1 text-xs font-medium text-fg;
   }
 
   .chip {
-    @apply inline-flex items-center rounded-md border border-fg/10 bg-fg/[0.03] px-2.5 py-1 text-xs text-fg/80;
+    @apply inline-flex items-center rounded-full border border-fg/10 bg-fg/[0.04] px-3 py-1 text-xs text-fg/80 font-normal;
   }
 
   .card {
-    @apply rounded-2xl border border-fg/10 bg-card p-6 sm:p-7 transition hover:border-fg/25;
+    @apply rounded-2xl border border-fg/10 bg-card p-6 sm:p-8 transition hover:border-fg/25;
   }
 
   .link-underline {
     @apply relative inline-block after:absolute after:left-0 after:-bottom-0.5 after:h-px after:w-0 after:bg-current after:transition-all after:duration-300 hover:after:w-full;
   }
+
+  /* Timeline table hairline dividers */
+  .hairline-row {
+    @apply border-b border-fg/10 transition-colors hover:border-fg/25;
+  }
 }
 
-/* dot grid background — matches reference site */
-.hero-grid {
-  background-image: radial-gradient(circle, rgb(var(--fg) / 0.18) 1px, transparent 1px);
-  background-size: 28px 28px;
-  mask-image: radial-gradient(ellipse at center, black 30%, transparent 78%);
-  -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 78%);
+/* Warm cream/peach/yellow hero accent background - smooth soft glow matching reference */
+.hero-warm-gradient {
+  background: radial-gradient(ellipse 85% 65% at 50% 28%, #FDEED8 0%, #FBF1E4 38%, #FDF8F2 65%, #FFFFFF 100%);
 }
 
-.dot-bg {
-  background-image: radial-gradient(circle, rgb(var(--fg) / 0.12) 1px, transparent 1px);
-  background-size: 28px 28px;
+.dark .hero-warm-gradient {
+  background: radial-gradient(ellipse 85% 65% at 50% 28%, rgba(217, 119, 6, 0.2) 0%, rgba(180, 83, 9, 0.08) 40%, #0a0a0a 100%);
 }
 
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { scrollbar-width: none; }
 
-/* custom cursor — only on hover-capable, large screens */
+/* Custom cursor */
 @media (hover: hover) and (min-width: 1024px) {
   html.cursor-none-all,
   html.cursor-none-all * {

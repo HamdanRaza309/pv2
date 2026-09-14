@@ -4,8 +4,9 @@ export const personal = {
   role: "Full-Stack AI Engineer",
   tagline: "I build full-stack web apps, ship clean code.",
   intro:
-    "Full-stack AI Engineer based in Peshawar, Pakistan. I build scalable web applications with the MERN stack and integrate AI features into modern production software.",
+    "Full-stack AI Engineer based on Earth. I build high-performance MERN applications that handle massive traffic and whisper sweet code to AI features to keep them smart, compliant, and safely inside production environments.",
   location: "Ring Road, Peshawar, KPK, Pakistan",
+  analytics: "VISITOR COUNT: YOU + A FEW WEB CRAWLERS",
   availability: "Available for work",
   email: "hamdanraza309@gmail.com",
   resume:
@@ -245,62 +246,94 @@ export const services = [
 
 export const projects = [
   {
-title: "Look Atlas",
-slug: "look-atlas",
-category: "AI Commerce Infrastructure",
-description:
-"Architected and shipped a production AI content engine for ecommerce that orchestrates product and model ingestion, shot planning, image/video generation, and paid-download delivery through Fastify APIs + BullMQ workers, backed by Supabase Auth/Postgres/RLS/Storage, Stripe-driven subscription and credit-ledger automation with idempotent webhook handling, abuse-resistant trial controls, calibration pipelines, and multi-provider generation flows across Gemini, OpenAI, and Veo with deployment split across Railway/Render/Vercel and an embedded Shopify app surface.",
-tech: [
-"TypeScript",
-"Node.js",
-"Fastify",
-"BullMQ",
-"Redis",
-"Supabase (Postgres, Auth, RLS, Storage)",
-"Stripe",
-"OpenAI",
-"Google Gemini",
-"Google Veo",
-"React",
-"Vite",
-"Next.js",
-"Shopify App Bridge + React Router",
-"Tailwind CSS",
-"Railway",
-"Render",
-"Vercel",
-"Docker",
-],
-live: "https://lookatlas.com",
-github: null,
-featured: true,
-},
-{
-  title: "Climate Tracker Initiative",
-  slug: "climate-tracker-initiative",
-  category: "Full-Stack · AI · SaaS",
-  description:
-    "Engineered an AI-powered ESG data platform utilizing autonomous web agents and LLM extraction pipelines to ingest, structure, and audit corporate sustainability metrics from multi-page PDFs, integrated with enterprise Entra ID SSO.",
-  tech: [
-    "React",
-    "TypeScript",
-    "Node.js",
-    "Express",
-    "PostgreSQL",
-    "Supabase",
-    "Redis",
-    "Bull",
-    "OpenAI",
-    "LangChain",
-    "Puppeteer",
-    "Vite",
-    "Tailwind CSS"
-  ],
-  live: "https://cleartraced.com/",
-  github: null,
-  featured: true,
-},
-{ title: "Inhalo: Distributed AI Short-Form Content Engine", slug: "inhalo", category: "Full-Stack & AI Infrastructure", description: "Architected and shipped a distributed, queue-based content automation system that dynamically generates short-form video assets, slideshows, and interactive breathing challenges. Built an agent-centric Python FastAPI service utilizing Gemini, Claude, and ElevenLabs TTS to generate scripts, layout configurations, and voiceovers, integrated with an Express and BullMQ worker queue to isolate and scale heavy FFmpeg/MoviePy video rendering jobs. Engineered a real-time progress-tracking dashboard with React, Supabase, and Redis, enabling seamless pipeline orchestration and template management.", tech: [ "React", "TailwindCSS", "Node.js", "Express", "FastAPI", "BullMQ", "Redis", "Supabase", "Gemini API", "ElevenLabs", "FFmpeg", "MoviePy" ], live: "https://content-automation-puce.vercel.app/", github: null, featured: true, },
+    title: "Look Atlas",
+    slug: "look-atlas",
+    category: "AI Commerce Infrastructure",
+    description:
+      "Architected and shipped a production AI content engine for ecommerce that orchestrates product and model ingestion, shot planning, image/video generation, and paid-download delivery through Fastify APIs + BullMQ workers, backed by Supabase Auth/Postgres/RLS/Storage, Stripe-driven subscription and credit-ledger automation with idempotent webhook handling, abuse-resistant trial controls, calibration pipelines, and multi-provider generation flows across Gemini, OpenAI, and Veo with deployment split across Railway/Render/Vercel and an embedded Shopify app surface.",
+    tech: [
+      "TypeScript",
+      "Node.js",
+      "Fastify",
+      "BullMQ",
+      "Redis",
+      "Supabase (Postgres, Auth, RLS, Storage)",
+      "Stripe",
+      "OpenAI",
+      "Google Gemini",
+      "Google Veo",
+      "React",
+      "Vite",
+      "Next.js",
+      "Shopify App Bridge + React Router",
+      "Tailwind CSS",
+      "Railway",
+      "Render",
+      "Vercel",
+      "Docker",
+    ],
+    live: "https://lookatlas.com",
+    github: null,
+    featured: true,
+  },
+  {
+    title: "Climate Tracker Initiative",
+    slug: "climate-tracker-initiative",
+    category: "Full-Stack · AI · SaaS",
+    description:
+      "Engineered an AI-powered ESG data platform utilizing autonomous web agents and LLM extraction pipelines to ingest, structure, and audit corporate sustainability metrics from multi-page PDFs, integrated with enterprise Entra ID SSO.",
+    tech: [
+      "React",
+      "TypeScript",
+      "Node.js",
+      "Express",
+      "PostgreSQL",
+      "Supabase",
+      "Redis",
+      "Bull",
+      "OpenAI",
+      "LangChain",
+      "Puppeteer",
+      "Vite",
+      "Tailwind CSS"
+    ],
+    live: "https://cleartraced.com/",
+    github: null,
+    featured: true,
+  },
+  {
+    title: "ShelfBell",
+    slug: "shelfbell",
+    category: "Full-Stack · SaaS · Shopify",
+    description:
+      "Engineered a production-ready Shopify back-in-stock notification platform that helps ecommerce merchants capture demand for sold-out product variants and automatically notify shoppers when inventory returns. Built with a multi-tenant Node.js backend, Shopify webhooks, BullMQ + Redis background workers, Supabase PostgreSQL, secure JWT/HMAC authentication, transactional email delivery, and an embedded Shopify admin experience.",
+    tech: [
+      "TypeScript",
+      "React",
+      "React Router",
+      "Node.js",
+      "Express.js",
+      "Shopify App Bridge",
+      "Shopify APIs",
+      "Shopify Webhooks",
+      "BullMQ",
+      "Redis",
+      "Supabase PostgreSQL",
+      "Supabase Auth",
+      "SendGrid",
+      "JWT",
+      "HMAC",
+      "Tailwind CSS",
+      "Docker",
+      "Vercel",
+      "Railway",
+      "Cloudflare"
+    ],
+    live: "https://shelfbell.com",
+    github: null,
+    featured: true,
+  },
+  { title: "Inhalo: Distributed AI Short-Form Content Engine", slug: "inhalo", category: "Full-Stack & AI Infrastructure", description: "Architected and shipped a distributed, queue-based content automation system that dynamically generates short-form video assets, slideshows, and interactive breathing challenges. Built an agent-centric Python FastAPI service utilizing Gemini, Claude, and ElevenLabs TTS to generate scripts, layout configurations, and voiceovers, integrated with an Express and BullMQ worker queue to isolate and scale heavy FFmpeg/MoviePy video rendering jobs. Engineered a real-time progress-tracking dashboard with React, Supabase, and Redis, enabling seamless pipeline orchestration and template management.", tech: ["React", "TailwindCSS", "Node.js", "Express", "FastAPI", "BullMQ", "Redis", "Supabase", "Gemini API", "ElevenLabs", "FFmpeg", "MoviePy"], live: "https://content-automation-puce.vercel.app/", github: null, featured: true, },
   {
     title: "Cozy Craze",
     category: "Full-Stack · E-commerce",
@@ -456,7 +489,45 @@ export const projectDetails: Record<string, ProjectDetail> = {
       database: ["Supabase", "Redis"],
       cloud: ["MoviePy", "FFmpeg", "Vercel"]
     }
-  }
+  },
+  "ShelfBell": {
+    categoryLong: "Full-Stack · SaaS · Shopify",
+    problem: "eCommerce stores lose potential sales when products go out of stock, while shoppers have no reliable way to know when their specific product variant becomes available again. Merchants need a simple, automated way to capture this demand and reconnect with shoppers without complex notification workflows.",
+    solution: "Engineered a production-ready Shopify back-in-stock notification platform that captures shopper interest at the exact product-variant level and automatically sends restock notifications when inventory becomes available. The system combines Shopify webhooks, Redis-backed BullMQ workers, Supabase PostgreSQL, secure authentication, transactional email delivery, and an embedded Shopify admin experience.",
+    contributions: [
+      "Architected the multi-tenant backend using Node.js, Express.js, Supabase PostgreSQL, and tenant-aware data access for isolated Shopify stores.",
+      "Built the distributed inventory and notification processing pipeline using BullMQ and Redis for asynchronous jobs, retries, and background processing.",
+      "Integrated Shopify Admin APIs and inventory webhooks to detect product and variant availability changes and trigger notification workflows.",
+      "Implemented exact variant-level subscription handling so shoppers are associated with the specific product variant they requested.",
+      "Implemented secure authentication using Shopify App Bridge session tokens, internal JWT authentication, and HMAC verification for Shopify webhooks.",
+      "Built the embedded Shopify admin experience using React, React Router, Shopify App Bridge, and Polaris.",
+      "Developed the storefront Theme App Extension that allows shoppers to subscribe to back-in-stock alerts directly from sold-out products.",
+      "Implemented transactional email delivery with reusable templates, unsubscribe handling, suppression logic, retry processing, and provider-based email infrastructure.",
+      "Engineered merchant lifecycle flows covering Shopify installation, uninstallation, reinstallation, subscriber state, and store isolation."
+    ],
+    features: [
+      { title: "Variant-Level Restock Alerts", description: "Tracks shopper subscriptions against the exact product variant so customers are notified specifically when the item they requested becomes available.", icon: "Bell" },
+      { title: "Event-Driven Inventory Processing", description: "Uses Shopify inventory webhooks to trigger asynchronous availability processing without blocking the main application API.", icon: "Zap" },
+      { title: "Distributed Queue Architecture", description: "Utilizes BullMQ + Redis to isolate inventory processing, notification dispatch, retries, and reconciliation workloads from synchronous API requests.", icon: "Cpu" },
+      { title: "Shopify-Native Integration", description: "Embeds directly into Shopify Admin through App Bridge while providing a storefront notification experience through a Theme App Extension.", icon: "Layers" }
+    ],
+    metrics: [
+      { value: "Variant", label: "Level Restock Tracking" },
+      { value: "Idempotent", label: "Webhook Processing" },
+      { value: "Multi-Tenant", label: "Store Isolation" }
+    ],
+    techStack: {
+      frontend: ["React.js", "TypeScript", "React Router", "Shopify App Bridge", "Shopify Polaris", "Tailwind CSS"],
+      backend: ["Node.js", "Express.js", "BullMQ", "Redis", "JWT", "Shopify Admin API", "Shopify Webhooks"],
+      database: ["Supabase PostgreSQL", "Supabase Auth", "Row-Level Security"],
+      cloud: ["Railway", "Vercel", "Cloudflare", "Docker"]
+    },
+    gallery: [
+      { src: "/assets/shelfbell/merchant_dashboard.png", alt: "ShelfBell Merchant Dashboard", caption: "Embedded Shopify admin dashboard for managing ShelfBell configuration, subscribers, and notification settings." },
+      { src: "/assets/shelfbell/back_in_stock_widget.png", alt: "Back-in-Stock Widget", caption: "Storefront notification widget allowing shoppers to subscribe to sold-out product variants." },
+      { src: "/assets/shelfbell/subscriber_management.png", alt: "Subscriber Management", caption: "Subscriber management interface for monitoring shopper restock requests and notification states." }
+    ]
+  },
 };
 
 export function getProjectBySlug(slug: string) {
@@ -469,8 +540,8 @@ export function getProjectDetail(title: string): ProjectDetail | null {
 
 export const nav = [
   { label: "About", href: "#about" },
-  { label: "Stack", href: "#stack" },
+  { label: "Services", href: "#services" },
   { label: "Experience", href: "#experience" },
+  { label: "Stack", href: "#stack" },
   { label: "Projects", href: "#projects" },
-  { label: "Contact", href: "#contact" },
 ];

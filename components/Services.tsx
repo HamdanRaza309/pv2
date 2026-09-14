@@ -1,31 +1,45 @@
 import { services } from "@/lib/data";
+import { Reveal } from "./Reveal";
 
 export function Services() {
   return (
-    <section id="services" className="section">
+    <section id="services" className="section bg-bg">
       <div className="container-x">
-        <div className="flex items-baseline gap-4">
-          <span className="section-num-big">04</span>
-          <span className="eyebrow">Services</span>
-        </div>
-        <h2 className="mt-6 font-display font-bold text-3xl sm:text-4xl tracking-tight leading-[1.1] max-w-2xl">
-          What I can build for you.
-        </h2>
+        <Reveal>
+          <div className="eyebrow mb-3">Services · Capabilities</div>
+          <h2 className="section-title">
+            I CAN HELP YOU WITH
+          </h2>
+        </Reveal>
 
-        <div className="mt-12 grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {services.map((s, i) => (
-            <div key={s.title} className="card group">
-              <div className="font-mono text-xs text-muted">
-                {String(i + 1).padStart(2, "0")}
+        {/* Editorial grid of numbered items with thin numerals and subtle vertical dividers */}
+        <div className="mt-14 border-y border-fg/10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+          {services.map((s, i) => {
+            const num = String(i + 1).padStart(2, "0");
+            return (
+              <div
+                key={s.title}
+                className="p-6 sm:p-8 flex flex-col justify-between border-b lg:border-b-0 border-fg/10 sm:[&:not(:nth-child(2n))]:border-r lg:[&:not(:nth-child(4n))]:border-r group transition-colors hover:bg-fg/[0.02]"
+              >
+                <div>
+                  {/* Light thin serif/mono numeral */}
+                  <span className="font-serif italic text-3xl sm:text-4xl text-fg/30 font-light block">
+                    {num}
+                  </span>
+
+                  {/* Short bold service title */}
+                  <h3 className="mt-6 font-display font-bold uppercase tracking-tight text-base sm:text-lg text-fg leading-snug group-hover:opacity-80 transition-opacity">
+                    {s.title}
+                  </h3>
+
+                  {/* Verbatim description */}
+                  <p className="mt-3 text-xs sm:text-sm text-fg/70 leading-relaxed">
+                    {s.description}
+                  </p>
+                </div>
               </div>
-              <h3 className="mt-3 font-display font-bold text-xl tracking-tight group-hover:text-accent transition">
-                {s.title}
-              </h3>
-              <p className="mt-3 text-sm text-fg/70 leading-relaxed">
-                {s.description}
-              </p>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>
