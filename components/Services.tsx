@@ -1,7 +1,14 @@
-import { services } from "@/lib/data";
+import { services as staticServices } from "@/lib/data";
 import { Reveal } from "./Reveal";
+import type { Service } from "@/lib/supabase/types";
 
-export function Services() {
+interface ServicesProps {
+  services?: Service[];
+}
+
+export function Services({ services: propServices }: ServicesProps = {}) {
+  const list = propServices && propServices.length > 0 ? propServices : staticServices;
+
   return (
     <section id="services" className="section bg-bg">
       <div className="container-x">
@@ -14,7 +21,7 @@ export function Services() {
 
         {/* Editorial grid of numbered items with thin numerals and subtle vertical dividers */}
         <div className="mt-14 border-y border-fg/10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-          {services.map((s, i) => {
+          {list.map((s, i) => {
             const num = String(i + 1).padStart(2, "0");
             return (
               <div

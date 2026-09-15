@@ -1,8 +1,21 @@
 import { ArrowUp, Facebook, Github, Instagram, Linkedin } from "lucide-react";
 import { personal } from "@/lib/data";
 import { CopyrightYear } from "./CopyrightYear";
+import type { SiteSettings } from "@/lib/supabase/types";
 
-export function Footer() {
+interface FooterProps {
+  settings?: SiteSettings;
+}
+
+export function Footer({ settings }: FooterProps = {}) {
+  const profile = settings || {
+    name: personal.name,
+    role: personal.role,
+    location: personal.location,
+    email: personal.email,
+    socials: personal.socials,
+  };
+
   return (
     <footer className="bg-bg">
       <div className="container-x py-16 sm:py-20">
@@ -14,11 +27,11 @@ export function Footer() {
               className="inline-block transition-opacity hover:opacity-80"
             >
               <span className="font-serif italic text-3xl font-medium text-fg">
-                {personal.name.split(" ")[0]}.
+                {profile.name.split(" ")[0]}.
               </span>
             </a>
             <p className="mt-4 text-xs sm:text-sm text-muted max-w-sm leading-relaxed">
-              {personal.role} · {personal.location.split(",")[0]}, PK · Open to remote work.
+              {profile.role} · {profile.location.split(",")[0]}, PK · Open to remote work.
             </p>
           </div>
 
@@ -51,40 +64,50 @@ export function Footer() {
           <div className="md:col-span-4">
             <div className="eyebrow mb-4">Connect</div>
             <div className="flex gap-2">
-              <Social
-                href={personal.socials.github}
-                label="GitHub"
-                icon={<Github className="h-4 w-4" />}
-              />
-              <Social
-                href={personal.socials.linkedin}
-                label="LinkedIn"
-                icon={<Linkedin className="h-4 w-4" />}
-              />
-              <Social
-                href={personal.socials.facebook}
-                label="Facebook"
-                icon={<Facebook className="h-4 w-4" />}
-              />
-              <Social
-                href={personal.socials.instagram}
-                label="Instagram"
-                icon={<Instagram className="h-4 w-4" />}
-              />
+              {profile.socials?.github && (
+                <Social
+                  href={profile.socials.github}
+                  label="GitHub"
+                  icon={<Github className="h-4 w-4" />}
+                />
+              )}
+              {profile.socials?.linkedin && (
+                <Social
+                  href={profile.socials.linkedin}
+                  label="LinkedIn"
+                  icon={<Linkedin className="h-4 w-4" />}
+                />
+              )}
+              {profile.socials?.facebook && (
+                <Social
+                  href={profile.socials.facebook}
+                  label="Facebook"
+                  icon={<Facebook className="h-4 w-4" />}
+                />
+              )}
+              {profile.socials?.instagram && (
+                <Social
+                  href={profile.socials.instagram}
+                  label="Instagram"
+                  icon={<Instagram className="h-4 w-4" />}
+                />
+              )}
             </div>
-            <a
-              href={`mailto:${personal.email}`}
-              className="mt-6 inline-block font-mono text-xs text-fg/80 hover:text-fg transition-colors link-underline"
-            >
-              {personal.email}
-            </a>
+            {profile.email && (
+              <a
+                href={`mailto:${profile.email}`}
+                className="mt-6 inline-block font-mono text-xs text-fg/80 hover:text-fg transition-colors link-underline"
+              >
+                {profile.email}
+              </a>
+            )}
           </div>
         </div>
 
         {/* Bottom Bar */}
         <div className="mt-14 pt-8 border-t border-fg/10 flex flex-wrap items-center justify-between gap-4">
           <div className="font-mono text-xs text-muted">
-            © <CopyrightYear /> {personal.name}. All rights reserved.
+            © <CopyrightYear /> {profile.name}. All rights reserved.
           </div>
           <a
             href="#top"

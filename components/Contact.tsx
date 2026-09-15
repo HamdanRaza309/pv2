@@ -1,8 +1,18 @@
 import { ArrowUpRight, Mail } from "lucide-react";
 import { personal } from "@/lib/data";
 import { Reveal } from "./Reveal";
+import type { SiteSettings } from "@/lib/supabase/types";
 
-export function Contact() {
+interface ContactProps {
+  settings?: SiteSettings;
+}
+
+export function Contact({ settings }: ContactProps = {}) {
+  const profile = settings || {
+    email: personal.email,
+    socials: personal.socials,
+  };
+
   return (
     <section id="contact" className="section bg-bg">
       <div className="container-x">
@@ -27,50 +37,58 @@ export function Contact() {
 
             {/* Pill Action Buttons */}
             <div className="mt-10 flex flex-wrap items-center gap-3">
-              <a href={`mailto:${personal.email}`} className="btn-primary !px-6 !py-3">
+              <a href={`mailto:${profile.email}`} className="btn-primary !px-6 !py-3">
                 <Mail className="h-4 w-4" />
-                <span>{personal.email}</span>
+                <span>{profile.email}</span>
               </a>
 
-              <a
-                href={personal.socials.linkedin}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn-secondary !px-5 !py-3"
-              >
-                <span>LinkedIn</span>
-                <ArrowUpRight className="h-3.5 w-3.5" />
-              </a>
+              {profile.socials?.linkedin && (
+                <a
+                  href={profile.socials.linkedin}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-secondary !px-5 !py-3"
+                >
+                  <span>LinkedIn</span>
+                  <ArrowUpRight className="h-3.5 w-3.5" />
+                </a>
+              )}
 
-              <a
-                href={personal.socials.github}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn-secondary !px-5 !py-3"
-              >
-                <span>GitHub</span>
-                <ArrowUpRight className="h-3.5 w-3.5" />
-              </a>
+              {profile.socials?.github && (
+                <a
+                  href={profile.socials.github}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-secondary !px-5 !py-3"
+                >
+                  <span>GitHub</span>
+                  <ArrowUpRight className="h-3.5 w-3.5" />
+                </a>
+              )}
 
-              <a
-                href={personal.socials.facebook}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn-secondary !px-5 !py-3"
-              >
-                <span>Facebook</span>
-                <ArrowUpRight className="h-3.5 w-3.5" />
-              </a>
+              {profile.socials?.facebook && (
+                <a
+                  href={profile.socials.facebook}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-secondary !px-5 !py-3"
+                >
+                  <span>Facebook</span>
+                  <ArrowUpRight className="h-3.5 w-3.5" />
+                </a>
+              )}
 
-              <a
-                href={personal.socials.instagram}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn-secondary !px-5 !py-3"
-              >
-                <span>Instagram</span>
-                <ArrowUpRight className="h-3.5 w-3.5" />
-              </a>
+              {profile.socials?.instagram && (
+                <a
+                  href={profile.socials.instagram}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-secondary !px-5 !py-3"
+                >
+                  <span>Instagram</span>
+                  <ArrowUpRight className="h-3.5 w-3.5" />
+                </a>
+              )}
             </div>
 
             {/* Status Footer */}

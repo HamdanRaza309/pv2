@@ -2,12 +2,37 @@
 
 import { ArrowUpRight, Github } from "lucide-react";
 import { motion } from "framer-motion";
-import { projects } from "@/lib/data";
+import { projects as staticProjects } from "@/lib/data";
+import type { Project } from "@/lib/supabase/types";
 
-const more = projects.filter((p) => !p.featured);
+interface MoreBuildsProps {
+  projects?: Project[];
+}
 
-export function MoreBuilds() {
+export function MoreBuilds({ projects: propProjects }: MoreBuildsProps = {}) {
+  const source: Project[] =
+    propProjects && propProjects.length > 0
+      ? propProjects
+      : (staticProjects.map((p, idx) => ({
+          id: `static-${idx}`,
+          title: p.title,
+          slug: p.slug || null,
+          category: p.category,
+          description: p.description,
+          tech: p.tech,
+          live_url: p.live,
+          github_url: p.github,
+          featured: p.featured,
+          thumbnail_url: null,
+          sort_order: idx + 1,
+          published: true,
+        })) as Project[]);
+
+  const more = source.filter((p) => !p.featured && (p.published ?? true));
+
   if (more.length === 0) return null;
+
+
 
   return (
     <section className="section bg-bg pt-0 sm:pt-4">
@@ -57,9 +82,9 @@ export function MoreBuilds() {
               </div>
 
               <div className="mt-6 pt-4 border-t border-fg/10 flex items-center gap-3">
-                {p.live && (
+                {(p.live_url || p.live) && (
                   <a
-                    href={p.live}
+                    href={(p.live_url || p.live)!}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-1 font-mono text-[11px] uppercase tracking-wider text-fg hover:opacity-70 transition-opacity"
@@ -68,9 +93,9 @@ export function MoreBuilds() {
                     <ArrowUpRight className="h-3 w-3" />
                   </a>
                 )}
-                {p.github && (
+                {(p.github_url || p.github) && (
                   <a
-                    href={p.github}
+                    href={(p.github_url || p.github)!}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-1 font-mono text-[11px] uppercase tracking-wider text-fg/75 hover:text-fg transition-colors ml-auto"

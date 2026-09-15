@@ -1,7 +1,24 @@
-import { techStack } from "@/lib/data";
+import { techStack as staticTechStack } from "@/lib/data";
 import { Reveal } from "./Reveal";
+import type { TechStackCategory } from "@/lib/supabase/types";
 
-export function TechStack() {
+interface TechStackProps {
+  techStack?: TechStackCategory[];
+}
+
+export function TechStack({ techStack: propTech }: TechStackProps = {}) {
+  // Normalize either static shape or Supabase shape
+  const list: { category: string; items: string[] }[] = (
+    propTech && propTech.length > 0 ? propTech : staticTechStack
+  ).map((group: any) => ({
+    category: group.category,
+    items: group.items
+      ? typeof group.items[0] === "string"
+        ? (group.items as string[])
+        : (group.items.map((it: any) => it.name) as string[])
+      : [],
+  }));
+
   return (
     <section id="stack" className="section bg-bg pt-0 sm:pt-4">
       <div className="container-x">
@@ -13,7 +30,7 @@ export function TechStack() {
 
         {/* Sub-section B: Tech Stack (Skills/Tools Table Layout) */}
         <div className="mt-8 border-t border-fg/10">
-          {techStack.map((group, i) => (
+          {list.map((group, i) => (
             <div
               key={group.category}
               className="py-8 border-b border-fg/10 grid lg:grid-cols-12 gap-6 items-start group hover:bg-fg/[0.01] transition-colors"

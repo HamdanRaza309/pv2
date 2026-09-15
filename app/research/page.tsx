@@ -3,16 +3,10 @@ import { BookOpen, FlaskConical, GraduationCap, Building2, BookMarked } from "lu
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Reveal } from "@/components/Reveal";
-import {
-  researchBio,
-  researchInterests,
-  publications,
-  researchProjects,
-  affiliations,
-  coursework,
-  researchNav,
-  personal,
-} from "@/lib/data.research";
+import { researchNav } from "@/lib/data.research";
+import { getResearchContent, getSiteSettings } from "@/lib/supabase/queries";
+
+export const revalidate = 3600;
 
 export const metadata: Metadata = {
   title: "Hamdan Raza — NeuroAI Researcher",
@@ -20,7 +14,26 @@ export const metadata: Metadata = {
     "Research interests in NeuroAI, Brain-Computer Interfaces, Neural Signal Processing, Computational Neuroscience, and Neuroprosthetics.",
 };
 
-export default function ResearchPage() {
+export default async function ResearchPage() {
+  const [researchData, settings] = await Promise.all([
+    getResearchContent(),
+    getSiteSettings(),
+  ]);
+
+  const {
+    bio,
+    interests: researchInterests,
+    publications,
+    projects: researchProjects,
+    affiliations,
+    coursework,
+  } = researchData;
+
+  const headline = bio?.headline || "Researcher & Aspiring Neuroscientist";
+  const summary =
+    bio?.summary ||
+    "Research investigations in NeuroAI, Brain-Computer Interfaces (BCIs), neural signal processing, and computational neuroscience. Real publications and ongoing project data will appear here.";
+
   return (
     <div className="persona-research bg-bg text-fg min-h-screen">
       <Navbar navItems={researchNav} />
@@ -35,13 +48,13 @@ export default function ResearchPage() {
             <Reveal>
               <div className="max-w-3xl">
                 <span className="font-mono text-[11px] uppercase tracking-[0.25em] text-muted mb-4 block">
-                  Research · {personal.name}
+                  Research · {settings.name}
                 </span>
                 <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl font-semibold leading-[1.15] tracking-tight text-fg">
-                  {researchBio.headline}
+                  {headline}
                 </h1>
                 <p className="mt-6 text-base sm:text-lg text-fg/75 leading-relaxed font-serif italic max-w-2xl">
-                  {researchBio.summary}
+                  {summary}
                 </p>
               </div>
             </Reveal>
@@ -98,13 +111,13 @@ export default function ResearchPage() {
                 {publications.map((pub, idx) => (
                   <Reveal key={idx} delay={idx * 0.08}>
                     <div className="p-6 rounded-xl border border-fg/10 bg-card hover:border-fg/20 transition">
-                      <h3 className="font-serif font-semibold text-lg text-fg">
+                      <h3 className="font-serif font-semibold text-lg sm:text-xl text-fg leading-snug">
                         {pub.link ? (
                           <a
                             href={pub.link}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="hover:underline underline-offset-4"
+                            className="hover:text-accent transition"
                           >
                             {pub.title}
                           </a>
@@ -112,12 +125,14 @@ export default function ResearchPage() {
                           pub.title
                         )}
                       </h3>
-                      <p className="mt-1 text-sm text-muted">{pub.authors}</p>
-                      <p className="mt-1 text-sm text-fg/60 italic">
+                      <p className="mt-2 text-sm text-fg/70 font-serif italic">
+                        {pub.authors}
+                      </p>
+                      <p className="mt-1 font-mono text-xs text-muted">
                         {pub.venue} · {pub.year}
                       </p>
                       {pub.abstract && (
-                        <p className="mt-3 text-sm text-fg/70 leading-relaxed">
+                        <p className="mt-4 text-xs sm:text-sm text-fg/60 leading-relaxed border-t border-fg/5 pt-3">
                           {pub.abstract}
                         </p>
                       )}
@@ -131,35 +146,39 @@ export default function ResearchPage() {
           </div>
         </section>
 
-        {/* ── Ongoing Research Projects ───────────────── */}
+        {/* ── Ongoing Projects ────────────────────────── */}
         <section id="research-projects" className="section">
           <div className="container-x">
             <Reveal>
               <div className="flex items-center gap-3 mb-10">
                 <FlaskConical className="h-5 w-5 text-accent" />
                 <h2 className="font-serif text-2xl sm:text-3xl font-semibold tracking-tight text-fg">
-                  Ongoing Research Projects
+                  Ongoing Projects
                 </h2>
               </div>
             </Reveal>
 
             {researchProjects.length > 0 ? (
-              <div className="space-y-6">
-                {researchProjects.map((proj, idx) => (
+              <div className="grid md:grid-cols-2 gap-6">
+                {researchProjects.map((project, idx) => (
                   <Reveal key={idx} delay={idx * 0.08}>
-                    <div className="p-6 rounded-xl border border-fg/10 bg-card hover:border-fg/20 transition">
-                      <div className="flex items-center gap-3 mb-2">
-                        <h3 className="font-serif font-semibold text-lg text-fg">
-                          {proj.title}
-                        </h3>
-                        <span className="badge text-[10px]">{proj.status}</span>
+                    <div className="p-6 rounded-xl border border-fg/10 bg-card hover:border-fg/20 transition flex flex-col justify-between">
+                      <div>
+                        <div className="flex items-center justify-between gap-4 mb-3">
+                          <h3 className="font-serif font-semibold text-lg text-fg">
+                            {project.title}
+                          </h3>
+                          <span className="font-mono text-[10px] uppercase tracking-wider px-2.5 py-0.5 rounded-full border border-accent/30 text-accent shrink-0">
+                            {project.status}
+                          </span>
+                        </div>
+                        <p className="text-sm text-fg/70 leading-relaxed">
+                          {project.description}
+                        </p>
                       </div>
-                      <p className="text-sm text-fg/70 leading-relaxed">
-                        {proj.description}
-                      </p>
-                      {proj.collaborators && (
-                        <p className="mt-2 text-xs text-muted font-mono">
-                          Collaborators: {proj.collaborators}
+                      {project.collaborators && (
+                        <p className="mt-4 pt-3 border-t border-fg/5 font-mono text-xs text-muted">
+                          Collaborators: {project.collaborators}
                         </p>
                       )}
                     </div>
@@ -167,7 +186,7 @@ export default function ResearchPage() {
                 ))}
               </div>
             ) : (
-              <PlaceholderNotice section="Research Projects" />
+              <PlaceholderNotice section="Ongoing Projects" />
             )}
           </div>
         </section>
@@ -179,23 +198,32 @@ export default function ResearchPage() {
               <div className="flex items-center gap-3 mb-10">
                 <Building2 className="h-5 w-5 text-accent" />
                 <h2 className="font-serif text-2xl sm:text-3xl font-semibold tracking-tight text-fg">
-                  Affiliations
+                  Lab &amp; Academic Affiliations
                 </h2>
               </div>
             </Reveal>
 
             {affiliations.length > 0 ? (
-              <div className="space-y-4">
+              <div className="space-y-6">
                 {affiliations.map((aff, idx) => (
                   <Reveal key={idx} delay={idx * 0.08}>
-                    <div className="hairline-row py-5 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6">
-                      <span className="font-serif font-semibold text-fg min-w-[200px]">
-                        {aff.institution}
-                      </span>
-                      <span className="text-sm text-fg/80">{aff.role}</span>
-                      <span className="font-mono text-xs text-muted ml-auto">
-                        {aff.period}
-                      </span>
+                    <div className="p-6 rounded-xl border border-fg/10 bg-card hover:border-fg/20 transition">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mb-2">
+                        <h3 className="font-serif font-semibold text-lg text-fg">
+                          {aff.institution}
+                        </h3>
+                        <span className="font-mono text-xs text-muted">
+                          {aff.period}
+                        </span>
+                      </div>
+                      <p className="font-serif italic text-sm text-accent mb-2">
+                        {aff.role}
+                      </p>
+                      {aff.description && (
+                        <p className="text-sm text-fg/70 leading-relaxed">
+                          {aff.description}
+                        </p>
+                      )}
                     </div>
                   </Reveal>
                 ))}
@@ -219,20 +247,20 @@ export default function ResearchPage() {
             </Reveal>
 
             {coursework.length > 0 ? (
-              <div className="grid sm:grid-cols-2 gap-5">
+              <div className="grid md:grid-cols-2 gap-6">
                 {coursework.map((course, idx) => (
                   <Reveal key={idx} delay={idx * 0.08}>
-                    <div className="p-5 rounded-xl border border-fg/10 bg-card">
-                      <h3 className="font-serif font-semibold text-fg">
+                    <div className="p-6 rounded-xl border border-fg/10 bg-card hover:border-fg/20 transition">
+                      <h3 className="font-serif font-semibold text-lg text-fg">
                         {course.title}
                       </h3>
                       {course.institution && (
-                        <p className="mt-1 text-xs text-muted font-mono">
+                        <p className="font-serif italic text-xs text-accent mt-1 mb-2">
                           {course.institution}
                         </p>
                       )}
                       {course.description && (
-                        <p className="mt-2 text-sm text-fg/70 leading-relaxed">
+                        <p className="text-sm text-fg/70 leading-relaxed">
                           {course.description}
                         </p>
                       )}
@@ -258,7 +286,7 @@ export default function ResearchPage() {
                   I&apos;m always open to research collaborations, academic discussions, and new opportunities in NeuroAI and brain-computer interfaces.
                 </p>
                 <a
-                  href={`mailto:${personal.email}`}
+                  href={`mailto:${settings.email}`}
                   className="btn-primary"
                 >
                   Get in touch
@@ -269,20 +297,20 @@ export default function ResearchPage() {
         </section>
       </main>
 
-      <Footer />
+      <Footer settings={settings} />
     </div>
   );
 }
 
-/* ── Placeholder notice for empty sections ──────────────── */
+/* ── Clean placeholder notice for empty sections (no dummy data) ──────────────── */
 function PlaceholderNotice({ section }: { section: string }) {
   return (
-    <div className="rounded-xl border border-dashed border-fg/20 bg-fg/[0.02] p-8 text-center">
+    <div className="rounded-xl border border-dashed border-fg/15 bg-fg/[0.02] p-8 text-center">
       <p className="font-mono text-xs uppercase tracking-widest text-muted">
-        {section} — Awaiting real content
+        {section}
       </p>
-      <p className="mt-2 text-sm text-fg/50">
-        Edit <code className="font-mono text-xs bg-fg/5 px-1.5 py-0.5 rounded">lib/data.research.ts</code> to populate this section.
+      <p className="mt-2 text-xs text-fg/50 font-serif italic">
+        Entries will appear once published in the portfolio database.
       </p>
     </div>
   );

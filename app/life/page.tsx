@@ -4,15 +4,10 @@ import { Heart, Camera, Sparkles, Star } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Reveal } from "@/components/Reveal";
-import {
-  informalBio,
-  hobbies,
-  photoGallery,
-  personalProjects,
-  favorites,
-  lifeNav,
-  personal,
-} from "@/lib/data.life";
+import { lifeNav } from "@/lib/data.life";
+import { getLifeContent, getSiteSettings } from "@/lib/supabase/queries";
+
+export const revalidate = 3600;
 
 export const metadata: Metadata = {
   title: "Hamdan Raza — Off the Clock",
@@ -20,7 +15,28 @@ export const metadata: Metadata = {
     "The human side of Hamdan Raza — hobbies, interests, photos, and the person beyond the code and research.",
 };
 
-export default function LifePage() {
+export default async function LifePage() {
+  const [lifeData, settings] = await Promise.all([
+    getLifeContent(),
+    getSiteSettings(),
+  ]);
+
+  const {
+    bio,
+    hobbies,
+    photoGallery,
+    personalProjects,
+    favorites,
+  } = lifeData;
+
+  const headline = bio?.headline || "Off the Clock";
+  const greeting =
+    bio?.greeting ||
+    "The human side — hobbies, photography, and personal explorations beyond code and research.";
+  const extendedBio =
+    bio?.bio ||
+    "When I'm not writing code or exploring neural models, I spend my time exploring mountain trails, tinkering with photography, discovering music, and enjoying good chai.";
+
   return (
     <div className="persona-life bg-bg text-fg min-h-screen">
       <Navbar navItems={lifeNav} />
@@ -35,13 +51,13 @@ export default function LifePage() {
             <Reveal>
               <div className="max-w-3xl">
                 <span className="font-mono text-[11px] uppercase tracking-[0.25em] text-muted mb-4 block">
-                  Off the Clock · {personal.name}
+                  Off the Clock · {settings.name}
                 </span>
                 <h1 className="font-display font-bold text-4xl sm:text-5xl md:text-6xl tracking-tight leading-[1.05] text-fg">
-                  {informalBio.headline}
+                  {headline}
                 </h1>
                 <p className="mt-6 text-base sm:text-lg text-fg/75 leading-relaxed max-w-2xl">
-                  {informalBio.greeting}
+                  {greeting}
                 </p>
               </div>
             </Reveal>
@@ -62,8 +78,8 @@ export default function LifePage() {
 
             <Reveal>
               <div className="max-w-3xl">
-                <p className="text-base sm:text-lg text-fg/80 leading-relaxed">
-                  {informalBio.bio}
+                <p className="text-base sm:text-lg text-fg/80 leading-relaxed font-serif italic">
+                  {extendedBio}
                 </p>
               </div>
             </Reveal>
@@ -77,35 +93,25 @@ export default function LifePage() {
               <div className="flex items-center gap-3 mb-10">
                 <Sparkles className="h-5 w-5 text-accent" />
                 <h2 className="font-display font-bold text-2xl sm:text-3xl tracking-tight text-fg uppercase">
-                  Hobbies & Interests
+                  Hobbies &amp; Interests
                 </h2>
               </div>
             </Reveal>
 
             {hobbies.length > 0 ? (
-              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid md:grid-cols-2 gap-6">
                 {hobbies.map((hobby, idx) => (
                   <Reveal key={idx} delay={idx * 0.08}>
-                    <div className="rounded-2xl border border-fg/10 bg-card overflow-hidden hover:border-fg/20 hover:shadow-md transition-all duration-300 group">
-                      {hobby.image && (
-                        <div className="relative aspect-[16/10] overflow-hidden">
-                          <Image
-                            src={hobby.image}
-                            alt={hobby.title}
-                            fill
-                            className="object-cover group-hover:scale-[1.03] transition-transform duration-500"
-                          />
-                        </div>
-                      )}
-                      <div className="p-5">
-                        <h3 className="font-display font-bold text-lg text-fg uppercase tracking-tight">
-                          {hobby.emoji && <span className="mr-2">{hobby.emoji}</span>}
+                    <div className="p-6 rounded-xl border border-fg/10 bg-card hover:border-fg/20 transition">
+                      <div className="flex items-center gap-3 mb-3">
+                        <span className="text-2xl">{hobby.emoji || "✨"}</span>
+                        <h3 className="font-display font-bold text-lg text-fg uppercase">
                           {hobby.title}
                         </h3>
-                        <p className="mt-2 text-sm text-fg/70 leading-relaxed">
-                          {hobby.description}
-                        </p>
                       </div>
+                      <p className="text-sm text-fg/70 leading-relaxed">
+                        {hobby.description}
+                      </p>
                     </div>
                   </Reveal>
                 ))}
@@ -123,28 +129,45 @@ export default function LifePage() {
               <div className="flex items-center gap-3 mb-10">
                 <Camera className="h-5 w-5 text-accent" />
                 <h2 className="font-display font-bold text-2xl sm:text-3xl tracking-tight text-fg uppercase">
-                  Gallery
+                  Photo Gallery
                 </h2>
               </div>
             </Reveal>
 
             {photoGallery.length > 0 ? (
-              <div className="columns-1 sm:columns-2 lg:columns-3 gap-4 space-y-4">
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {photoGallery.map((photo, idx) => (
-                  <Reveal key={idx} delay={idx * 0.06}>
-                    <div className="break-inside-avoid rounded-2xl overflow-hidden border border-fg/10 group">
-                      <Image
-                        src={photo.src}
-                        alt={photo.alt}
-                        width={600}
-                        height={400}
-                        className="w-full h-auto group-hover:scale-[1.02] transition-transform duration-500"
-                      />
-                      {photo.caption && (
-                        <div className="px-4 py-3">
-                          <p className="text-xs text-muted">{photo.caption}</p>
-                        </div>
-                      )}
+                  <Reveal key={idx} delay={idx * 0.08}>
+                    <div className="group overflow-hidden rounded-xl border border-fg/10 bg-card">
+                      <div className="relative aspect-[4/3] overflow-hidden bg-fg/5">
+                        {photo.src ? (
+                          <Image
+                            src={photo.src}
+                            alt={photo.alt}
+                            fill
+                            unoptimized={typeof photo.src === "string"}
+                            className="object-cover group-hover:scale-105 transition duration-500"
+                            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                          />
+                        ) : (
+                          <div className="flex h-full w-full flex-col items-center justify-center gap-2 bg-gradient-to-br from-fg/5 to-fg/10 text-muted">
+                            <Camera className="h-8 w-8 stroke-[1.5] text-accent/60" />
+                            <span className="font-mono text-[11px] uppercase tracking-wider text-fg/40">
+                              {photo.alt || "Photo placeholder"}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                      <div className="p-4">
+                        <p className="font-display font-semibold text-sm text-fg">
+                          {photo.alt}
+                        </p>
+                        {photo.caption && (
+                          <p className="mt-1 text-xs text-fg/60 font-serif italic">
+                            {photo.caption}
+                          </p>
+                        )}
+                      </div>
                     </div>
                   </Reveal>
                 ))}
@@ -168,24 +191,26 @@ export default function LifePage() {
             </Reveal>
 
             {personalProjects.length > 0 ? (
-              <div className="grid sm:grid-cols-2 gap-6">
-                {personalProjects.map((proj, idx) => (
+              <div className="grid md:grid-cols-2 gap-6">
+                {personalProjects.map((project, idx) => (
                   <Reveal key={idx} delay={idx * 0.08}>
-                    <div className="p-6 rounded-2xl border border-fg/10 bg-card hover:border-fg/20 transition">
-                      <h3 className="font-display font-bold text-lg text-fg uppercase tracking-tight">
-                        {proj.title}
-                      </h3>
-                      <p className="mt-2 text-sm text-fg/70 leading-relaxed">
-                        {proj.description}
-                      </p>
-                      {proj.link && (
+                    <div className="p-6 rounded-xl border border-fg/10 bg-card hover:border-fg/20 transition flex flex-col justify-between">
+                      <div>
+                        <h3 className="font-display font-bold text-lg text-fg uppercase mb-2">
+                          {project.title}
+                        </h3>
+                        <p className="text-sm text-fg/70 leading-relaxed">
+                          {project.description}
+                        </p>
+                      </div>
+                      {project.link && (
                         <a
-                          href={proj.link}
+                          href={project.link}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="mt-3 inline-flex text-xs font-mono text-accent hover:underline underline-offset-4"
+                          className="mt-4 font-mono text-xs text-accent hover:underline inline-block"
                         >
-                          View →
+                          View project &rarr;
                         </a>
                       )}
                     </div>
@@ -198,14 +223,14 @@ export default function LifePage() {
           </div>
         </section>
 
-        {/* ── Favorite Things ─────────────────────────── */}
+        {/* ── Favorites ───────────────────────────────── */}
         <section id="favorites" className="section">
           <div className="container-x">
             <Reveal>
               <div className="flex items-center gap-3 mb-10">
                 <Star className="h-5 w-5 text-accent" />
                 <h2 className="font-display font-bold text-2xl sm:text-3xl tracking-tight text-fg uppercase">
-                  Favorites
+                  Favorite Things
                 </h2>
               </div>
             </Reveal>
@@ -214,17 +239,21 @@ export default function LifePage() {
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {favorites.map((fav, idx) => (
                   <Reveal key={idx} delay={idx * 0.08}>
-                    <div className="p-5 rounded-xl border border-fg/10 bg-card">
-                      <h3 className="font-display font-bold text-sm text-fg uppercase tracking-wider mb-3">
+                    <div className="p-6 rounded-xl border border-fg/10 bg-card hover:border-fg/20 transition">
+                      <h3 className="font-display font-bold text-base text-accent uppercase mb-3">
                         {fav.category}
                       </h3>
-                      <div className="flex flex-wrap gap-1.5">
-                        {fav.items.map((item) => (
-                          <span key={item} className="chip text-xs">
-                            {item}
-                          </span>
+                      <ul className="space-y-2">
+                        {fav.items.map((item, itemIdx) => (
+                          <li
+                            key={itemIdx}
+                            className="text-sm text-fg/75 flex items-start gap-2"
+                          >
+                            <span className="text-accent/60 text-xs mt-1">•</span>
+                            <span>{item}</span>
+                          </li>
                         ))}
-                      </div>
+                      </ul>
                     </div>
                   </Reveal>
                 ))}
@@ -247,7 +276,7 @@ export default function LifePage() {
                   Want to chat about something non-work-related? I&apos;m always up for it.
                 </p>
                 <a
-                  href={`mailto:${personal.email}`}
+                  href={`mailto:${settings.email}`}
                   className="btn-primary"
                 >
                   Drop a message
@@ -258,20 +287,20 @@ export default function LifePage() {
         </section>
       </main>
 
-      <Footer />
+      <Footer settings={settings} />
     </div>
   );
 }
 
-/* ── Placeholder notice for empty sections ──────────────── */
+/* ── Clean placeholder notice for empty sections (no dummy data) ──────────────── */
 function PlaceholderNotice({ section }: { section: string }) {
   return (
-    <div className="rounded-xl border border-dashed border-fg/20 bg-fg/[0.02] p-8 text-center">
+    <div className="rounded-xl border border-dashed border-fg/15 bg-fg/[0.02] p-8 text-center">
       <p className="font-mono text-xs uppercase tracking-widest text-muted">
-        {section} — Awaiting real content
+        {section}
       </p>
-      <p className="mt-2 text-sm text-fg/50">
-        Edit <code className="font-mono text-xs bg-fg/5 px-1.5 py-0.5 rounded">lib/data.life.ts</code> to populate this section.
+      <p className="mt-2 text-xs text-fg/50 font-serif italic">
+        Entries will appear once published in the portfolio database.
       </p>
     </div>
   );

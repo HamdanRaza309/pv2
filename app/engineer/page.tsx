@@ -11,6 +11,9 @@ import { Contact } from "@/components/Contact";
 import { Footer } from "@/components/Footer";
 import { Cursor } from "@/components/Cursor";
 import { nav } from "@/lib/data";
+import { getEngineerContent, getSiteSettings } from "@/lib/supabase/queries";
+
+export const revalidate = 3600; // Cache with on-demand revalidation via revalidatePath
 
 export const metadata: Metadata = {
   title: "Hamdan Raza — Full-Stack AI Engineer | Portfolio",
@@ -18,22 +21,31 @@ export const metadata: Metadata = {
     "Full-Stack AI Engineer based in Peshawar, Pakistan. Building MERN-stack web apps integrated with AI features. React, Next.js, Node.js, MongoDB.",
 };
 
-export default function EngineerPage() {
+export default async function EngineerPage() {
+  const [settings, engineerData] = await Promise.all([
+    getSiteSettings(),
+    getEngineerContent(),
+  ]);
+
   return (
     <div className="persona-engineer">
       <Cursor />
       <Navbar navItems={nav} />
       <main>
-        <Hero />
-        <About />
-        <Services />
-        <Experience />
-        <TechStack />
-        <HorizontalProjects />
-        <MoreBuilds />
-        <Contact />
+        <Hero settings={settings} />
+        <About
+          settings={settings}
+          totalProjects={engineerData.projects.length}
+          experience={engineerData.experience}
+        />
+        <Services services={engineerData.services} />
+        <Experience experience={engineerData.experience} />
+        <TechStack techStack={engineerData.techStack} />
+        <HorizontalProjects projects={engineerData.projects} />
+        <MoreBuilds projects={engineerData.projects} />
+        <Contact settings={settings} />
       </main>
-      <Footer />
+      <Footer settings={settings} />
     </div>
   );
 }

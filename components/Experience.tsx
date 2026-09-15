@@ -1,7 +1,14 @@
-import { experience } from "@/lib/data";
+import { experience as staticExperience } from "@/lib/data";
 import { Reveal } from "./Reveal";
+import type { Experience as ExperienceType } from "@/lib/supabase/types";
 
-export function Experience() {
+interface ExperienceProps {
+  experience?: ExperienceType[];
+}
+
+export function Experience({ experience: propExp }: ExperienceProps = {}) {
+  const list = propExp && propExp.length > 0 ? propExp : staticExperience;
+
   return (
     <section id="experience" className="section bg-bg pb-12 sm:pb-16">
       <div className="container-x">
@@ -17,7 +24,7 @@ export function Experience() {
 
         {/* Sub-section A: Experience (Job History / Timeline) */}
         <div className="mt-12 border-t border-fg/10">
-          {experience.map((job, i) => (
+          {list.map((job, i) => (
             <article
               key={i}
               className="py-10 border-b border-fg/10 grid lg:grid-cols-12 gap-8 items-start group"
