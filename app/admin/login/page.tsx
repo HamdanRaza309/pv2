@@ -41,8 +41,8 @@ export default function AdminLoginPage() {
   };
 
   const isConfigured = Boolean(
-    process.env.NEXT_PUBLIC_SUPABASE_URL &&
-    !process.env.NEXT_PUBLIC_SUPABASE_URL.includes("your-project-ref")
+    process.env.SUPABASE_URL &&
+    !process.env.SUPABASE_URL.includes("your-project-ref")
   );
 
   return (
@@ -63,8 +63,8 @@ export default function AdminLoginPage() {
               <span>Supabase Not Yet Configured</span>
             </div>
             <p>
-              Please set <code className="bg-black/40 px-1 py-0.5 rounded text-amber-300">NEXT_PUBLIC_SUPABASE_URL</code> and{" "}
-              <code className="bg-black/40 px-1 py-0.5 rounded text-amber-300">NEXT_PUBLIC_SUPABASE_ANON_KEY</code> in your{" "}
+              Please set <code className="bg-black/40 px-1 py-0.5 rounded text-amber-300">SUPABASE_URL</code> and{" "}
+              <code className="bg-black/40 px-1 py-0.5 rounded text-amber-300">SUPABASE_ANON_KEY</code> in your{" "}
               <code className="bg-black/40 px-1 py-0.5 rounded text-amber-300">.env.local</code> file to enable login.
             </p>
           </div>

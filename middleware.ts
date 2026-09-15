@@ -8,8 +8,8 @@ export async function middleware(request: NextRequest) {
     },
   });
 
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  const supabaseUrl = process.env.SUPABASE_URL;
+  const supabaseKey = process.env.SUPABASE_ANON_KEY;
 
   // If Supabase is not yet configured, allow viewing admin login with a configuration warning
   if (!supabaseUrl || !supabaseKey || supabaseUrl.includes("your-project-ref")) {

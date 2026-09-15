@@ -32,8 +32,8 @@ cp .env.example .env.local
 Fill in your Supabase project credentials:
 
 ```bash
-NEXT_PUBLIC_SUPABASE_URL=https://<your-project-ref>.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=<your-anon-public-key>
+SUPABASE_URL=https://<your-project-ref>.supabase.co
+SUPABASE_ANON_KEY=<your-anon-public-key>
 ```
 
 ### 2. Install Dependencies & Run Locally

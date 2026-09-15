@@ -21,8 +21,8 @@ import type {
 } from "./types";
 
 function getPublicClient() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  const url = process.env.SUPABASE_URL;
+  const key = process.env.SUPABASE_ANON_KEY;
 
   if (!url || !key || url.includes("your-project-ref")) {
     return null;
@@ -49,6 +49,10 @@ export async function getSiteSettings(): Promise<SiteSettings> {
         .maybeSingle();
 
       if (!error && data) {
+        if (!data.portrait_url || data.portrait_url.startsWith("/assets/")) {
+          data.portrait_url =
+            "https://tnpbnridezldixmriner.supabase.co/storage/v1/object/public/portfolio/avatars/hamdan_cutout.png";
+        }
         return data as SiteSettings;
       }
     } catch (err) {
@@ -69,7 +73,8 @@ export async function getSiteSettings(): Promise<SiteSettings> {
     availability: staticData.personal.availability,
     email: staticData.personal.email,
     resume_url: staticData.personal.resume,
-    portrait_url: "/assets/hamdan_cutout.png",
+    portrait_url:
+      "https://tnpbnridezldixmriner.supabase.co/storage/v1/object/public/portfolio/avatars/hamdan_cutout.png",
     socials: staticData.personal.socials,
     about_paragraphs: staticData.about.paragraphs,
   };
@@ -232,16 +237,16 @@ export async function getProjectBySlug(slug: string): Promise<{
     },
     detail: staticDet
       ? {
-          project_id: "static",
-          category_long: staticDet.categoryLong,
-          problem: staticDet.problem,
-          solution: staticDet.solution,
-          contributions: staticDet.contributions,
-          features: staticDet.features,
-          metrics: staticDet.metrics,
-          tech_stack: staticDet.techStack,
-          gallery: staticDet.gallery || [],
-        }
+        project_id: "static",
+        category_long: staticDet.categoryLong,
+        problem: staticDet.problem,
+        solution: staticDet.solution,
+        contributions: staticDet.contributions,
+        features: staticDet.features,
+        metrics: staticDet.metrics,
+        tech_stack: staticDet.techStack,
+        gallery: staticDet.gallery || [],
+      }
       : null,
   };
 }

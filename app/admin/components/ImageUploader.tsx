@@ -10,6 +10,8 @@ import {
   Check,
   RefreshCw,
   ExternalLink,
+  Eye,
+  EyeOff,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { deleteStorageFile } from "@/lib/supabase/storage";
@@ -23,6 +25,8 @@ interface ImageUploaderProps {
   defaultAspectRatio?: number; // e.g. 16/10 for projects, 4/5 for portrait, 4/3 for gallery
   onChange: (url: string) => void;
   helperText?: string;
+  published?: boolean;
+  onTogglePublished?: (published: boolean) => void;
 }
 
 export function ImageUploader({
@@ -32,6 +36,8 @@ export function ImageUploader({
   defaultAspectRatio = 16 / 10,
   onChange,
   helperText = "PNG, JPG, WebP, SVG up to 5MB",
+  published = true,
+  onTogglePublished,
 }: ImageUploaderProps) {
   const [uploading, setUploading] = useState(false);
   const [cropModalOpen, setCropModalOpen] = useState(false);
@@ -77,12 +83,43 @@ export function ImageUploader({
     setCropModalOpen(true);
   };
 
+  const fallbackSupabaseCutout =
+    "https://tnpbnridezldixmriner.supabase.co/storage/v1/object/public/portfolio/avatars/hamdan_cutout.png";
+
+  const displayUrl =
+    value && (value.startsWith("/assets/") || value.includes("hamdan_cutout"))
+      ? value.startsWith("http")
+        ? value
+        : fallbackSupabaseCutout
+      : value;
+
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
-        <label className="block text-xs font-semibold uppercase tracking-wider text-neutral-400">
-          {label}
-        </label>
+        <div className="flex items-center gap-2.5">
+          <label className="block text-xs font-semibold uppercase tracking-wider text-neutral-400">
+            {label}
+          </label>
+          {onTogglePublished && (
+            <button
+              type="button"
+              onClick={() => onTogglePublished(!published)}
+              className={`flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-medium border transition-colors ${
+                published
+                  ? "text-emerald-400 bg-emerald-950/40 border-emerald-800/40 hover:bg-emerald-900/50"
+                  : "text-neutral-400 bg-neutral-900 border-neutral-800 hover:text-white"
+              }`}
+              title={published ? "Visible on site (click to hide)" : "Hidden from site (click to show)"}
+            >
+              {published ? (
+                <Eye className="w-3 h-3 text-emerald-400" />
+              ) : (
+                <EyeOff className="w-3 h-3 text-neutral-400" />
+              )}
+              <span>{published ? "Visible" : "Hidden"}</span>
+            </button>
+          )}
+        </div>
         {value && (
           <button
             type="button"
@@ -96,13 +133,33 @@ export function ImageUploader({
       </div>
 
       {value ? (
-        <div className="rounded-xl border border-neutral-800 bg-neutral-950 p-2.5 space-y-2.5 max-w-sm">
-          <div className="relative w-full aspect-[16/10] bg-neutral-900 rounded-lg overflow-hidden flex items-center justify-center group">
+        <div
+          className={`rounded-xl border ${
+            !published ? "border-dashed border-neutral-800 bg-neutral-950/60" : "border-neutral-800 bg-neutral-950"
+          } p-2.5 space-y-2.5 max-w-sm transition-all`}
+        >
+          <div
+            className="relative w-full bg-neutral-900 rounded-lg overflow-hidden flex items-center justify-center group"
+            style={{ aspectRatio: defaultAspectRatio }}
+          >
             <img
-              src={value}
+              src={displayUrl || undefined}
               alt={label}
-              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+              onError={(e) => {
+                if (displayUrl !== fallbackSupabaseCutout) {
+                  (e.target as HTMLImageElement).src = fallbackSupabaseCutout;
+                }
+              }}
+              className={`w-full h-full object-contain transition-transform duration-300 group-hover:scale-105 ${
+                !published ? "opacity-40 grayscale" : ""
+              }`}
             />
+            {!published && (
+              <div className="absolute top-2 left-2 z-10 px-2 py-0.5 rounded bg-neutral-950/80 backdrop-blur text-[10px] font-mono text-neutral-400 border border-neutral-800 flex items-center gap-1">
+                <EyeOff className="w-3 h-3 text-neutral-400" />
+                <span>Hidden from site</span>
+              </div>
+            )}
             <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
               <button
                 type="button"
@@ -114,7 +171,7 @@ export function ImageUploader({
                 <span>Crop</span>
               </button>
               <a
-                href={value}
+                href={displayUrl || undefined}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="p-1.5 bg-neutral-900/90 hover:bg-neutral-900 text-white rounded-lg shadow-md border border-white/20"

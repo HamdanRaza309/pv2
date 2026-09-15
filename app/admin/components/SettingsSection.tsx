@@ -26,7 +26,14 @@ export function SettingsSection() {
 
       if (error) throw error;
       if (data) {
-        setSettings(data);
+        const isLegacy = !data.portrait_url || data.portrait_url.startsWith("/assets/");
+        const resolvedPortrait = isLegacy
+          ? "https://tnpbnridezldixmriner.supabase.co/storage/v1/object/public/portfolio/avatars/hamdan_cutout.png"
+          : data.portrait_url;
+        setSettings({
+          ...data,
+          portrait_url: resolvedPortrait,
+        });
       }
     } catch (err: any) {
       console.error("Failed to load settings:", err);
@@ -226,6 +233,17 @@ export function SettingsSection() {
           label="Hero Portrait Cutout Photo"
           value={settings.portrait_url}
           folder="avatars"
+          defaultAspectRatio={4 / 5}
+          published={(settings.socials as any)?.portrait_visible ?? true}
+          onTogglePublished={(visible) => {
+            setSettings((prev) => ({
+              ...prev,
+              socials: {
+                ...(prev.socials || {}),
+                portrait_visible: visible,
+              },
+            }));
+          }}
           onChange={(url) => setSettings({ ...settings, portrait_url: url })}
           helperText="Upload transparent PNG cutout or photo for hero section (max 5MB)"
         />

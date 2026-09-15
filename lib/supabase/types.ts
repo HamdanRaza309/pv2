@@ -11,12 +11,14 @@ export interface SiteSettings {
   email: string;
   resume_url: string;
   portrait_url?: string | null;
+  portrait_visible?: boolean;
   socials: {
     github?: string;
     linkedin?: string;
     facebook?: string;
     instagram?: string;
-    [key: string]: string | undefined;
+    portrait_visible?: boolean;
+    [key: string]: any;
   };
   about_paragraphs: string[];
   updated_at?: string;

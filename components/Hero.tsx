@@ -23,7 +23,13 @@ export function Hero({ settings }: HeroProps = {}) {
     email: personal.email,
     resume_url: personal.resume,
     portrait_url: null,
+    socials: personal.socials,
   };
+
+  const isPortraitVisible =
+    (profile as any).socials?.portrait_visible ??
+    (profile as any).portrait_visible ??
+    true;
 
   const portraitSrc =
     profile.portrait_url && !profile.portrait_url.startsWith("/assets/")
@@ -43,21 +49,23 @@ export function Hero({ settings }: HeroProps = {}) {
         <div className="hidden lg:flex relative w-full max-w-6xl mx-auto flex-1 flex-col justify-between pt-4">
 
           {/* Central Large Portrait Photo — Connecting the whole hero into one visual */}
-          <div className="absolute left-1/2 -translate-x-1/2 top-0 w-[580px] lg:w-[640px] xl:w-[700px] aspect-[4/5] z-10 pointer-events-none select-none">
-            <Image
-              src={portraitSrc}
-              alt={profile.name}
-              fill
-              priority
-              unoptimized={typeof portraitSrc === "string"}
-              className="object-contain object-top"
-              style={{
-                maskImage: "linear-gradient(to bottom, black 65%, transparent 96%)",
-                WebkitMaskImage: "linear-gradient(to bottom, black 65%, transparent 96%)",
-              }}
-              sizes="(min-width: 1024px) 700px"
-            />
-          </div>
+          {isPortraitVisible && portraitSrc && (
+            <div className="absolute left-1/2 -translate-x-1/2 top-0 w-[580px] lg:w-[640px] xl:w-[700px] aspect-[4/5] z-10 pointer-events-none select-none">
+              <Image
+                src={portraitSrc}
+                alt={profile.name}
+                fill
+                priority
+                unoptimized={typeof portraitSrc === "string"}
+                className="object-contain object-top"
+                style={{
+                  maskImage: "linear-gradient(to bottom, black 65%, transparent 96%)",
+                  WebkitMaskImage: "linear-gradient(to bottom, black 65%, transparent 96%)",
+                }}
+                sizes="(min-width: 1024px) 700px"
+              />
+            </div>
+          )}
 
           {/* Top Layer: "Hey, [Head] there" Script */}
           <div className="relative z-0 flex items-center justify-between w-full pt-4 select-none pointer-events-none">
@@ -156,21 +164,23 @@ export function Hero({ settings }: HeroProps = {}) {
           </div>
 
           {/* Centered Floating Cutout Portrait */}
-          <div className="relative w-56 sm:w-64 md:w-80 aspect-[4/5] mx-auto my-2 pointer-events-none select-none">
-            <Image
-              src={portraitSrc}
-              alt={profile.name}
-              fill
-              priority
-              unoptimized={typeof portraitSrc === "string"}
-              className="object-contain object-bottom"
-              style={{
-                maskImage: "linear-gradient(to bottom, black 72%, transparent 98%)",
-                WebkitMaskImage: "linear-gradient(to bottom, black 72%, transparent 98%)",
-              }}
-              sizes="(max-width: 640px) 240px, (max-width: 1024px) 320px, 400px"
-            />
-          </div>
+          {isPortraitVisible && portraitSrc && (
+            <div className="relative w-56 sm:w-64 md:w-80 aspect-[4/5] mx-auto my-2 pointer-events-none select-none">
+              <Image
+                src={portraitSrc}
+                alt={profile.name}
+                fill
+                priority
+                unoptimized={typeof portraitSrc === "string"}
+                className="object-contain object-bottom"
+                style={{
+                  maskImage: "linear-gradient(to bottom, black 72%, transparent 98%)",
+                  WebkitMaskImage: "linear-gradient(to bottom, black 72%, transparent 98%)",
+                }}
+                sizes="(max-width: 640px) 240px, (max-width: 1024px) 320px, 400px"
+              />
+            </div>
+          )}
 
           {/* Headline + Role + Bio block */}
           <div className="w-full text-center mt-2 px-2">
