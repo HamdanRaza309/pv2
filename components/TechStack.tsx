@@ -7,17 +7,25 @@ interface TechStackProps {
 }
 
 export function TechStack({ techStack: propTech }: TechStackProps = {}) {
-  // Normalize either static shape or Supabase shape
-  const list: { category: string; items: string[] }[] = (
-    propTech && propTech.length > 0 ? propTech : staticTechStack
-  ).map((group: any) => ({
-    category: group.category,
-    items: group.items
-      ? typeof group.items[0] === "string"
-        ? (group.items as string[])
-        : (group.items.map((it: any) => it.name) as string[])
-      : [],
-  }));
+  const rawGroups = propTech !== undefined ? propTech : staticTechStack;
+
+  // Normalize and filter out hidden categories and hidden items
+  const list: { category: string; items: string[] }[] = rawGroups
+    .filter((group: any) => group.published !== false)
+    .map((group: any) => {
+      const rawItems = group.items || [];
+      const publishedItems = rawItems
+        .filter((it: any) => typeof it === "string" || it.published !== false)
+        .map((it: any) => (typeof it === "string" ? it : it.name));
+
+      return {
+        category: group.category,
+        items: publishedItems,
+      };
+    })
+    .filter((group) => group.items.length > 0);
+
+  if (list.length === 0) return null;
 
   return (
     <section id="stack" className="section bg-bg pt-0 sm:pt-4">

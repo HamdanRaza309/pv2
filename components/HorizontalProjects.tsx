@@ -1,17 +1,44 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowUpRight, ChevronRight, Github, ExternalLink } from "lucide-react";
-import { projects, projectDetails } from "@/lib/data";
+import { ArrowUpRight, ChevronRight, Github } from "lucide-react";
+import { projects as staticProjects, projectDetails } from "@/lib/data";
 import { Reveal } from "./Reveal";
+import type { Project } from "@/lib/supabase/types";
 
 // Image mapping for projects that have asset screenshots
 const projectImages: Record<string, string> = {
-  "Look Atlas": "/assets/lookatlas/user_dashboard.png",
-  "Climate Tracker Initiative": "/assets/climatetrackerinitiative/esg_audit_ledger.png",
+  "Look Atlas":
+    "https://tnpbnridezldixmriner.supabase.co/storage/v1/object/public/portfolio/projects/lookatlas_user_dashboard.png",
+  "Climate Tracker Initiative":
+    "https://tnpbnridezldixmriner.supabase.co/storage/v1/object/public/portfolio/projects/climatetracker_esg_audit_ledger.png",
+  "ShelfBell":
+    "https://tnpbnridezldixmriner.supabase.co/storage/v1/object/public/portfolio/projects/shelfbell_merchant_dashboard.png",
 };
 
-export function HorizontalProjects() {
-  const featured = projects.filter((p) => p.featured);
+interface HorizontalProjectsProps {
+  projects?: Project[];
+}
+
+export function HorizontalProjects({ projects: propProjects }: HorizontalProjectsProps = {}) {
+  const source: Project[] =
+    propProjects && propProjects.length > 0
+      ? propProjects
+      : (staticProjects.map((p, idx) => ({
+          id: `static-${idx}`,
+          title: p.title,
+          slug: p.slug || null,
+          category: p.category,
+          description: p.description,
+          tech: p.tech,
+          live_url: p.live,
+          github_url: p.github,
+          featured: p.featured,
+          thumbnail_url: null,
+          sort_order: idx + 1,
+          published: true,
+        })) as Project[]);
+
+  const featured = source.filter((p) => p.featured && (p.published ?? true));
 
   return (
     <section id="projects" className="section bg-bg">
@@ -28,7 +55,7 @@ export function HorizontalProjects() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-12">
           {featured.map((p, i) => {
             const detail = projectDetails[p.title];
-            const screenshot = projectImages[p.title];
+            const screenshot = p.thumbnail_url || projectImages[p.title];
 
             return (
               <Reveal key={p.title} delay={i * 0.12}>
@@ -54,6 +81,7 @@ export function HorizontalProjects() {
                           src={screenshot}
                           alt={p.title}
                           fill
+                          unoptimized={typeof screenshot === "string"}
                           className="object-cover object-top filter transition-transform duration-500 group-hover:scale-[1.02]"
                           sizes="(max-width: 1024px) 100vw, 560px"
                         />
@@ -117,9 +145,9 @@ export function HorizontalProjects() {
 
                     {/* Action Links */}
                     <div className="mt-8 pt-5 border-t border-fg/10 flex flex-wrap items-center gap-3">
-                      {p.live && (
+                      {p.live_url && (
                         <a
-                          href={p.live}
+                          href={p.live_url}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="btn-primary text-xs !px-4 !py-1.5"
@@ -129,9 +157,9 @@ export function HorizontalProjects() {
                         </a>
                       )}
 
-                      {p.github && (
+                      {p.github_url && (
                         <a
-                          href={p.github}
+                          href={p.github_url}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="btn-secondary text-xs !px-4 !py-1.5"
@@ -141,7 +169,7 @@ export function HorizontalProjects() {
                         </a>
                       )}
 
-                      {detail && (
+                      {(detail || p.slug) && (
                         <Link
                           href={`/engineer/projects/${p.slug}`}
                           className="inline-flex items-center gap-1.5 font-mono text-xs uppercase tracking-wider text-fg/80 hover:text-fg ml-auto py-1"

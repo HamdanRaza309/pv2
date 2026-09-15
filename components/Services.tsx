@@ -7,7 +7,10 @@ interface ServicesProps {
 }
 
 export function Services({ services: propServices }: ServicesProps = {}) {
-  const list = propServices && propServices.length > 0 ? propServices : staticServices;
+  const rawList = propServices !== undefined ? propServices : staticServices;
+  const list = rawList.filter((s: any) => s.published !== false);
+
+  if (list.length === 0) return null;
 
   return (
     <section id="services" className="section bg-bg">

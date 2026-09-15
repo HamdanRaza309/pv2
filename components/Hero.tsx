@@ -1,8 +1,10 @@
 import Image from "next/image";
 import { ArrowDown, ArrowUpRight, MapPin } from "lucide-react";
 import { personal } from "@/lib/data";
-import hamdanCutout from "@/assets/hamdan_cutout.png";
 import type { SiteSettings } from "@/lib/supabase/types";
+
+const DEFAULT_PORTRAIT =
+  "https://tnpbnridezldixmriner.supabase.co/storage/v1/object/public/portfolio/avatars/hamdan_cutout.png";
 
 interface HeroProps {
   settings?: SiteSettings;
@@ -23,7 +25,10 @@ export function Hero({ settings }: HeroProps = {}) {
     portrait_url: null,
   };
 
-  const portraitSrc = profile.portrait_url || hamdanCutout;
+  const portraitSrc =
+    profile.portrait_url && !profile.portrait_url.startsWith("/assets/")
+      ? profile.portrait_url
+      : DEFAULT_PORTRAIT;
 
   return (
     <section

@@ -6,6 +6,7 @@ import { useToast } from "./Toast";
 import { ConfirmModal } from "./ConfirmModal";
 import { ImageUploader } from "./ImageUploader";
 import { revalidatePortfolio } from "@/app/admin/actions";
+import { deleteStorageFile, deleteStorageFiles } from "@/lib/supabase/storage";
 import {
   Loader2,
   Plus,
@@ -53,6 +54,7 @@ export function EngineerSection() {
     table: string;
     id: string;
     title: string;
+    isCaseStudy?: boolean;
   } | null>(null);
   const [deleting, setDeleting] = useState(false);
 
@@ -101,6 +103,60 @@ export function EngineerSection() {
     try {
       setDeleting(true);
       const supabase = createClient();
+
+      if (deleteTarget.isCaseStudy || deleteTarget.table === "project_details") {
+        // Fetch all gallery images for this case study to remove from storage
+        const { data: detailData } = await supabase
+          .from("project_details")
+          .select("gallery")
+          .eq("project_id", deleteTarget.id)
+          .maybeSingle();
+
+        if (detailData?.gallery && Array.isArray(detailData.gallery)) {
+          await deleteStorageFiles(
+            supabase,
+            detailData.gallery.map((g: any) => g?.src)
+          );
+        }
+
+        const { error } = await supabase
+          .from("project_details")
+          .delete()
+          .eq("project_id", deleteTarget.id);
+        if (error) throw error;
+
+        if (editingDetail?.projectId === deleteTarget.id) {
+          setEditingDetail(null);
+        }
+        await revalidatePortfolio();
+        toast(`Deleted case study for ${deleteTarget.title}`, "success");
+        setDeleteTarget(null);
+        fetchData();
+        return;
+      }
+
+      // If deleting a project, first remove thumbnail and case study images from storage
+      if (deleteTarget.table === "projects") {
+        const [{ data: projData }, { data: detailData }] = await Promise.all([
+          supabase.from("projects").select("thumbnail_url").eq("id", deleteTarget.id).maybeSingle(),
+          supabase.from("project_details").select("gallery").eq("project_id", deleteTarget.id).maybeSingle(),
+        ]);
+
+        const filesToDelete: string[] = [];
+        if (projData?.thumbnail_url) filesToDelete.push(projData.thumbnail_url);
+        if (detailData?.gallery && Array.isArray(detailData.gallery)) {
+          detailData.gallery.forEach((g: any) => {
+            if (g?.src) filesToDelete.push(g.src);
+          });
+        }
+
+        if (filesToDelete.length > 0) {
+          await deleteStorageFiles(supabase, filesToDelete);
+        }
+
+        await supabase.from("project_details").delete().eq("project_id", deleteTarget.id);
+      }
+
       const { error } = await supabase.from(deleteTarget.table).delete().eq("id", deleteTarget.id);
       if (error) throw error;
 
@@ -206,16 +262,44 @@ export function EngineerSection() {
 
     try {
       const supabase = createClient();
+
+      // Clean up gallery: remove items without any image src
+      const cleanGallery = (editingDetail.detail.gallery || [])
+        .filter((item) => item && typeof item.src === "string" && item.src.trim() !== "")
+        .map((item) => ({
+          src: item.src.trim(),
+          alt: item.alt?.trim() || "Project screenshot",
+          caption: item.caption?.trim() || "",
+          published: item.published ?? true,
+        }));
+
+      // Clean up metrics: remove empty metrics
+      const cleanMetrics = (editingDetail.detail.metrics || [])
+        .filter((m) => m && (m.value?.trim() || m.label?.trim()))
+        .map((m) => ({
+          value: m.value?.trim() || "",
+          label: m.label?.trim() || "",
+        }));
+
+      // Clean up features
+      const cleanFeatures = (editingDetail.detail.features || [])
+        .filter((f) => f && (f.title?.trim() || f.description?.trim()))
+        .map((f) => ({
+          title: f.title?.trim() || "",
+          description: f.description?.trim() || "",
+          icon: f.icon || "Sparkles",
+        }));
+
       const payload = {
         project_id: editingDetail.projectId,
         category_long: editingDetail.detail.category_long || "",
         problem: editingDetail.detail.problem || "",
         solution: editingDetail.detail.solution || "",
-        contributions: editingDetail.detail.contributions || [],
-        features: editingDetail.detail.features || [],
-        metrics: editingDetail.detail.metrics || [],
+        contributions: (editingDetail.detail.contributions || []).filter((c) => Boolean(c?.trim())),
+        features: cleanFeatures,
+        metrics: cleanMetrics,
         tech_stack: editingDetail.detail.tech_stack || {},
-        gallery: editingDetail.detail.gallery || [],
+        gallery: cleanGallery,
       };
 
       const { error } = await supabase
@@ -229,6 +313,49 @@ export function EngineerSection() {
       setEditingDetail(null);
     } catch (err: any) {
       toast(err.message || "Failed to save case study", "error");
+    }
+  };
+
+  // Delete Gallery Photo from state, database, and Supabase Storage
+  const deleteGalleryPhoto = async (idx: number) => {
+    if (!editingDetail) return;
+    const photo = (editingDetail.detail.gallery || [])[idx];
+    if (!photo) return;
+
+    try {
+      const supabase = createClient();
+
+      // 1. Delete physical asset from Supabase Storage so it is removed from Media & Assets tab
+      if (photo.src) {
+        await deleteStorageFile(supabase, photo.src);
+      }
+
+      // 2. Remove from local modal state
+      const updatedGallery = (editingDetail.detail.gallery || []).filter((_, i) => i !== idx);
+      setEditingDetail({
+        ...editingDetail,
+        detail: { ...editingDetail.detail, gallery: updatedGallery },
+      });
+
+      // 3. Persist updated gallery immediately to Supabase if case study exists
+      const cleanGallery = updatedGallery
+        .filter((item) => item && typeof item.src === "string" && item.src.trim() !== "")
+        .map((item) => ({
+          src: item.src.trim(),
+          alt: item.alt?.trim() || "Project screenshot",
+          caption: item.caption?.trim() || "",
+          published: item.published ?? true,
+        }));
+
+      await supabase
+        .from("project_details")
+        .update({ gallery: cleanGallery })
+        .eq("project_id", editingDetail.projectId);
+
+      await revalidatePortfolio();
+      toast("Photo deleted from case study and storage", "success");
+    } catch (err: any) {
+      toast(err.message || "Failed to delete photo", "error");
     }
   };
 
@@ -461,21 +588,22 @@ export function EngineerSection() {
                 <div className="flex items-center gap-2 self-end sm:self-center">
                   <button
                     onClick={() => togglePublish("projects", p.id, p.published)}
-                    className={`p-2 rounded-lg text-xs transition-colors ${
+                    className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all ${
                       p.published
-                        ? "text-emerald-400 hover:bg-emerald-950/30"
-                        : "text-neutral-500 hover:bg-neutral-800"
+                        ? "bg-emerald-950/40 text-emerald-400 border border-emerald-800/40 hover:bg-emerald-900/50"
+                        : "bg-neutral-800/80 text-neutral-400 border border-neutral-700/50 hover:bg-neutral-800 hover:text-white"
                     }`}
-                    title={p.published ? "Published (click to unpublish)" : "Draft (click to publish)"}
+                    title={p.published ? "Visible on site (click to hide)" : "Hidden from site (click to show)"}
                   >
-                    {p.published ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
+                    {p.published ? <Eye className="w-3.5 h-3.5 text-emerald-400" /> : <EyeOff className="w-3.5 h-3.5 text-neutral-400" />}
+                    <span>{p.published ? "Visible" : "Hidden"}</span>
                   </button>
 
-                  {p.featured && p.slug && (
+                  {p.slug && (
                     <button
                       onClick={() => openDetailEditor(p)}
                       className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-neutral-200 text-xs transition-colors"
-                      title="Edit detailed case study page"
+                      title="Edit or manage detailed case study page"
                     >
                       <BookOpen className="w-3.5 h-3.5 text-amber-400" />
                       <span>Case Study</span>
@@ -540,9 +668,15 @@ export function EngineerSection() {
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => togglePublish("services", s.id, s.published)}
-                    className={`p-2 rounded-lg text-xs ${s.published ? "text-emerald-400" : "text-neutral-500"}`}
+                    className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                      s.published
+                        ? "bg-emerald-950/40 text-emerald-400 border border-emerald-800/40 hover:bg-emerald-900/50"
+                        : "bg-neutral-800/80 text-neutral-400 border border-neutral-700/50 hover:bg-neutral-800 hover:text-white"
+                    }`}
+                    title={s.published ? "Visible on site (click to hide)" : "Hidden from site (click to show)"}
                   >
-                    {s.published ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
+                    {s.published ? <Eye className="w-3.5 h-3.5 text-emerald-400" /> : <EyeOff className="w-3.5 h-3.5 text-neutral-400" />}
+                    <span>{s.published ? "Visible" : "Hidden"}</span>
                   </button>
                   <button
                     onClick={() => setEditingService(s)}
@@ -611,9 +745,15 @@ export function EngineerSection() {
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => togglePublish("experience", e.id, e.published)}
-                      className={`p-2 rounded-lg text-xs ${e.published ? "text-emerald-400" : "text-neutral-500"}`}
+                      className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                        e.published
+                          ? "bg-emerald-950/40 text-emerald-400 border border-emerald-800/40 hover:bg-emerald-900/50"
+                          : "bg-neutral-800/80 text-neutral-400 border border-neutral-700/50 hover:bg-neutral-800 hover:text-white"
+                      }`}
+                      title={e.published ? "Visible on site (click to hide)" : "Hidden from site (click to show)"}
                     >
-                      {e.published ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
+                      {e.published ? <Eye className="w-3.5 h-3.5 text-emerald-400" /> : <EyeOff className="w-3.5 h-3.5 text-neutral-400" />}
+                      <span>{e.published ? "Visible" : "Hidden"}</span>
                     </button>
                     <button
                       onClick={() => setEditingExperience(e)}
@@ -678,7 +818,19 @@ export function EngineerSection() {
                       ({cat.items?.length || 0} items)
                     </span>
                   </div>
-                  <div className="flex items-center gap-1">
+                  <div className="flex items-center gap-1.5">
+                    <button
+                      onClick={() => togglePublish("tech_stack_categories", cat.id, cat.published)}
+                      className={`flex items-center gap-1 px-2 py-1 rounded-lg text-[11px] font-medium transition-all ${
+                        cat.published
+                          ? "bg-emerald-950/40 text-emerald-400 border border-emerald-800/40 hover:bg-emerald-900/50"
+                          : "bg-neutral-800/80 text-neutral-400 border border-neutral-700/50 hover:bg-neutral-800 hover:text-white"
+                      }`}
+                      title={cat.published ? "Category is visible (click to hide)" : "Category is hidden (click to show)"}
+                    >
+                      {cat.published ? <Eye className="w-3 h-3 text-emerald-400" /> : <EyeOff className="w-3 h-3 text-neutral-400" />}
+                      <span>{cat.published ? "Visible" : "Hidden"}</span>
+                    </button>
                     <button
                       onClick={() =>
                         setEditingItem({
@@ -712,12 +864,29 @@ export function EngineerSection() {
                   {(cat.items || []).map((item) => (
                     <span
                       key={item.id}
-                      className="group inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs bg-neutral-800 text-neutral-200 border border-neutral-700/50"
+                      className={`group inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs border transition-all ${
+                        item.published
+                          ? "bg-neutral-800 text-neutral-200 border-neutral-700/50"
+                          : "bg-neutral-950 text-neutral-500 border-dashed border-neutral-800 opacity-60"
+                      }`}
                     >
-                      <span>{item.name}</span>
+                      <button
+                        type="button"
+                        onClick={() => togglePublish("tech_stack_items", item.id, item.published)}
+                        title={item.published ? "Click to hide item" : "Click to show item"}
+                        className="hover:text-amber-400"
+                      >
+                        {item.published ? (
+                          <Eye className="w-3 h-3 text-emerald-400/80" />
+                        ) : (
+                          <EyeOff className="w-3 h-3 text-neutral-500" />
+                        )}
+                      </button>
+                      <span className={item.published ? "" : "line-through"}>{item.name}</span>
                       <button
                         onClick={() => setDeleteTarget({ table: "tech_stack_items", id: item.id, title: item.name })}
-                        className="opacity-40 group-hover:opacity-100 hover:text-rose-400"
+                        className="opacity-40 group-hover:opacity-100 hover:text-rose-400 ml-0.5"
+                        title="Delete item"
                       >
                         <X className="w-3 h-3" />
                       </button>
@@ -994,7 +1163,7 @@ export function EngineerSection() {
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   {(editingDetail.detail.metrics || []).map((m, idx) => (
-                    <div key={idx} className="p-3 bg-neutral-950 border border-neutral-800 rounded-xl space-y-2 relative">
+                    <div key={`metric-${idx}`} className="p-3 bg-neutral-950 border border-neutral-800 rounded-xl space-y-2 relative group">
                       <button
                         type="button"
                         onClick={() => {
@@ -1003,17 +1172,19 @@ export function EngineerSection() {
                             ...editingDetail,
                             detail: { ...editingDetail.detail, metrics: list },
                           });
+                          toast("Metric removed. Click Save Case Study to apply changes.", "info");
                         }}
-                        className="absolute top-2 right-2 text-neutral-500 hover:text-rose-400"
+                        className="absolute top-2 right-2 text-neutral-500 hover:text-rose-400 p-1 transition-colors"
+                        title="Delete this metric"
                       >
-                        <X className="w-3.5 h-3.5" />
+                        <Trash2 className="w-3.5 h-3.5" />
                       </button>
                       <input
                         type="text"
                         value={m.value}
                         onChange={(e) => {
                           const list = [...(editingDetail.detail.metrics || [])];
-                          list[idx].value = e.target.value;
+                          list[idx] = { ...list[idx], value: e.target.value };
                           setEditingDetail({
                             ...editingDetail,
                             detail: { ...editingDetail.detail, metrics: list },
@@ -1027,7 +1198,7 @@ export function EngineerSection() {
                         value={m.label}
                         onChange={(e) => {
                           const list = [...(editingDetail.detail.metrics || [])];
-                          list[idx].label = e.target.value;
+                          list[idx] = { ...list[idx], label: e.target.value };
                           setEditingDetail({
                             ...editingDetail,
                             detail: { ...editingDetail.detail, metrics: list },
@@ -1038,23 +1209,303 @@ export function EngineerSection() {
                       />
                     </div>
                   ))}
+                  {(editingDetail.detail.metrics || []).length === 0 && (
+                    <p className="text-xs text-neutral-400 italic py-1 sm:col-span-3">
+                      No impact metrics added yet. Click &quot;+ Add Metric&quot; to add numbers/stats.
+                    </p>
+                  )}
                 </div>
               </div>
 
-              <div className="flex justify-end gap-3 pt-4 border-t border-neutral-800">
+              {/* Key Features */}
+              <div className="space-y-3 border-t border-neutral-800 pt-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <label className="text-xs font-semibold uppercase text-neutral-400">
+                      Key Features
+                    </label>
+                    <p className="text-[11px] text-neutral-400">
+                      Core architecture components and features
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const list = [
+                        ...(editingDetail.detail.features || []),
+                        { title: "", description: "", icon: "Sparkles" },
+                      ];
+                      setEditingDetail({
+                        ...editingDetail,
+                        detail: { ...editingDetail.detail, features: list },
+                      });
+                    }}
+                    className="flex items-center gap-1 text-xs text-amber-400 hover:text-amber-300 font-medium bg-neutral-900 border border-neutral-800 px-2.5 py-1 rounded-lg"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                    <span>Add Feature</span>
+                  </button>
+                </div>
+
+                <div className="space-y-3">
+                  {(editingDetail.detail.features || []).map((f, idx) => (
+                    <div
+                      key={`feature-${idx}`}
+                      className="p-3 bg-neutral-950 border border-neutral-800 rounded-xl space-y-2 relative"
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-mono text-neutral-400">Feature #{idx + 1}</span>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const list = (editingDetail.detail.features || []).filter((_, i) => i !== idx);
+                            setEditingDetail({
+                              ...editingDetail,
+                              detail: { ...editingDetail.detail, features: list },
+                            });
+                            toast("Feature removed. Click Save Case Study to apply changes.", "info");
+                          }}
+                          className="flex items-center gap-1 text-neutral-500 hover:text-rose-400 text-xs px-2 py-0.5 rounded transition-colors"
+                          title="Delete Feature"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                          <span>Delete</span>
+                        </button>
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                        <div className="sm:col-span-2">
+                          <input
+                            type="text"
+                            value={f.title}
+                            onChange={(e) => {
+                              const list = [...(editingDetail.detail.features || [])];
+                              list[idx] = { ...list[idx], title: e.target.value };
+                              setEditingDetail({
+                                ...editingDetail,
+                                detail: { ...editingDetail.detail, features: list },
+                              });
+                            }}
+                            placeholder="Feature Title (e.g. Multi-Provider AI)"
+                            className="w-full px-2.5 py-1.5 bg-neutral-900 border border-neutral-800 rounded-lg text-white text-xs font-semibold"
+                          />
+                        </div>
+                        <div>
+                          <select
+                            value={f.icon || "Sparkles"}
+                            onChange={(e) => {
+                              const list = [...(editingDetail.detail.features || [])];
+                              list[idx] = { ...list[idx], icon: e.target.value };
+                              setEditingDetail({
+                                ...editingDetail,
+                                detail: { ...editingDetail.detail, features: list },
+                              });
+                            }}
+                            className="w-full px-2.5 py-1.5 bg-neutral-900 border border-neutral-800 rounded-lg text-neutral-300 text-xs"
+                          >
+                            <option value="Sparkles">Sparkles (AI)</option>
+                            <option value="Cpu">Cpu (Compute)</option>
+                            <option value="Layers">Layers (Integration)</option>
+                            <option value="Compass">Compass (Architecture)</option>
+                          </select>
+                        </div>
+                      </div>
+                      <textarea
+                        rows={2}
+                        value={f.description}
+                        onChange={(e) => {
+                          const list = [...(editingDetail.detail.features || [])];
+                          list[idx] = { ...list[idx], description: e.target.value };
+                          setEditingDetail({
+                            ...editingDetail,
+                            detail: { ...editingDetail.detail, features: list },
+                          });
+                        }}
+                        placeholder="Feature description and technical implementation details..."
+                        className="w-full px-2.5 py-1.5 bg-neutral-900 border border-neutral-800 rounded-lg text-white text-xs"
+                      />
+                    </div>
+                  ))}
+                  {(editingDetail.detail.features || []).length === 0 && (
+                    <p className="text-xs text-neutral-400 italic py-1">
+                      No key features added yet. Click &quot;Add Feature&quot; to describe architecture blocks.
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              {/* Case Study Gallery Photos */}
+              <div className="space-y-3 pt-2 border-t border-neutral-800">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <label className="text-xs font-semibold uppercase text-neutral-400">
+                      Gallery Images & Screenshots
+                    </label>
+                    <p className="text-[11px] text-neutral-400">
+                      Upload, crop, and caption screenshots or architecture diagrams for the case study
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const list = [...(editingDetail.detail.gallery || []), { src: "", alt: "", caption: "", published: true }];
+                      setEditingDetail({
+                        ...editingDetail,
+                        detail: { ...editingDetail.detail, gallery: list },
+                      });
+                    }}
+                    className="flex items-center gap-1 text-xs text-amber-400 hover:text-amber-300 font-medium bg-neutral-900 border border-neutral-800 px-2.5 py-1 rounded-lg"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                    <span>Add Photo</span>
+                  </button>
+                </div>
+
+                <div className="space-y-4">
+                  {(editingDetail.detail.gallery || []).map((item, idx) => (
+                    <div
+                      key={`photo-${idx}-${item.src || "new"}`}
+                      className="p-3.5 bg-neutral-950 border border-neutral-800 rounded-xl space-y-3"
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-mono text-neutral-400">Photo #{idx + 1}</span>
+                        <div className="flex items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const list = [...(editingDetail.detail.gallery || [])];
+                              list[idx] = { ...list[idx], published: !(item.published ?? true) };
+                              setEditingDetail({
+                                ...editingDetail,
+                                detail: { ...editingDetail.detail, gallery: list },
+                              });
+                            }}
+                            className={`flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-medium border transition-colors ${
+                              (item.published ?? true)
+                                ? "text-emerald-400 bg-emerald-950/40 border-emerald-800/40 hover:bg-emerald-900/50"
+                                : "text-neutral-500 bg-neutral-900 border-neutral-800 hover:text-white"
+                            }`}
+                            title={(item.published ?? true) ? "Click to hide photo" : "Click to show photo"}
+                          >
+                            {(item.published ?? true) ? (
+                              <Eye className="w-3 h-3 text-emerald-400" />
+                            ) : (
+                              <EyeOff className="w-3 h-3 text-neutral-400" />
+                            )}
+                            <span>{(item.published ?? true) ? "Visible" : "Hidden"}</span>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => deleteGalleryPhoto(idx)}
+                            className="flex items-center gap-1 px-2.5 py-1 text-xs text-rose-400 hover:text-rose-300 hover:bg-rose-950/40 border border-rose-900/40 rounded-lg transition-colors font-medium"
+                            title="Delete this photo from case study and storage"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                            <span>Delete Photo</span>
+                          </button>
+                        </div>
+                      </div>
+
+                      <ImageUploader
+                        label="Screenshot / Diagram"
+                        value={item.src}
+                        folder="projects"
+                        onChange={async (url) => {
+                          const list = [...(editingDetail.detail.gallery || [])];
+                          // If replacing with a new image and old image was from Supabase Storage, delete old asset
+                          if (url && item.src && item.src !== url) {
+                            const supabase = createClient();
+                            await deleteStorageFile(supabase, item.src);
+                          }
+                          list[idx] = { ...list[idx], src: url };
+                          setEditingDetail({
+                            ...editingDetail,
+                            detail: { ...editingDetail.detail, gallery: list },
+                          });
+                        }}
+                        helperText="Upload new image or crop/adjust current image (16:10 / 16:9 recommended)"
+                      />
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <div>
+                          <label className="text-[10px] uppercase font-semibold text-neutral-400">Alt Title</label>
+                          <input
+                            type="text"
+                            value={item.alt || ""}
+                            onChange={(e) => {
+                              const list = [...(editingDetail.detail.gallery || [])];
+                              list[idx] = { ...list[idx], alt: e.target.value };
+                              setEditingDetail({
+                                ...editingDetail,
+                                detail: { ...editingDetail.detail, gallery: list },
+                              });
+                            }}
+                            placeholder="e.g. User Dashboard"
+                            className="w-full px-2.5 py-1.5 bg-neutral-900 border border-neutral-800 rounded-lg text-white text-xs"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-[10px] uppercase font-semibold text-neutral-400">Caption / Description</label>
+                          <input
+                            type="text"
+                            value={item.caption || ""}
+                            onChange={(e) => {
+                              const list = [...(editingDetail.detail.gallery || [])];
+                              list[idx] = { ...list[idx], caption: e.target.value };
+                              setEditingDetail({
+                                ...editingDetail,
+                                detail: { ...editingDetail.detail, gallery: list },
+                              });
+                            }}
+                            placeholder="e.g. Personalized analytics and review management"
+                            className="w-full px-2.5 py-1.5 bg-neutral-900 border border-neutral-800 rounded-lg text-white text-xs"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+
+                  {(editingDetail.detail.gallery || []).length === 0 && (
+                    <p className="text-xs text-neutral-400 italic py-2">
+                      No gallery photos added yet. Click &quot;Add Photo&quot; to upload case study visuals.
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              {/* Case Study Modal Footer */}
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-4 border-t border-neutral-800">
                 <button
                   type="button"
-                  onClick={() => setEditingDetail(null)}
-                  className="px-4 py-2 text-sm text-neutral-400 hover:text-white"
+                  onClick={() =>
+                    setDeleteTarget({
+                      table: "project_details",
+                      id: editingDetail.projectId,
+                      title: `Case Study for "${editingDetail.projectTitle}"`,
+                      isCaseStudy: true,
+                    })
+                  }
+                  className="flex items-center justify-center gap-1.5 px-3.5 py-2 bg-rose-950/40 hover:bg-rose-900/60 text-rose-400 hover:text-rose-300 border border-rose-800/40 rounded-xl text-xs font-semibold transition-colors"
+                  title="Delete this entire case study page from the database"
                 >
-                  Cancel
+                  <Trash2 className="w-4 h-4" />
+                  <span>Delete Case Study</span>
                 </button>
-                <button
-                  type="submit"
-                  className="px-5 py-2 bg-amber-500 hover:bg-amber-400 text-neutral-950 font-bold rounded-xl text-sm"
-                >
-                  Save Case Study
-                </button>
+
+                <div className="flex items-center justify-end gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setEditingDetail(null)}
+                    className="px-4 py-2 text-sm text-neutral-400 hover:text-white"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-5 py-2 bg-amber-500 hover:bg-amber-400 text-neutral-950 font-bold rounded-xl text-sm shadow-md transition-all active:scale-95"
+                  >
+                    Save Case Study
+                  </button>
+                </div>
               </div>
             </form>
           </div>
@@ -1100,6 +1551,15 @@ export function EngineerSection() {
                   className="w-full px-3 py-2 bg-neutral-950 border border-neutral-800 rounded-xl text-white text-sm"
                 />
               </div>
+              <label className="flex items-center gap-2 cursor-pointer text-xs font-semibold text-neutral-300">
+                <input
+                  type="checkbox"
+                  checked={editingService.published ?? true}
+                  onChange={(e) => setEditingService({ ...editingService, published: e.target.checked })}
+                  className="rounded bg-neutral-950 border-neutral-800 text-amber-500 focus:ring-0"
+                />
+                <span>Visible on live portfolio (Published)</span>
+              </label>
               <div className="flex justify-end gap-3 pt-2">
                 <button
                   type="button"
@@ -1198,6 +1658,15 @@ export function EngineerSection() {
                   />
                 </div>
               </div>
+              <label className="flex items-center gap-2 cursor-pointer text-xs font-semibold text-neutral-300">
+                <input
+                  type="checkbox"
+                  checked={editingExperience.published ?? true}
+                  onChange={(e) => setEditingExperience({ ...editingExperience, published: e.target.checked })}
+                  className="rounded bg-neutral-950 border-neutral-800 text-amber-500 focus:ring-0"
+                />
+                <span>Visible on live portfolio (Published)</span>
+              </label>
               <div className="flex justify-end gap-3 pt-2">
                 <button
                   type="button"
@@ -1248,6 +1717,15 @@ export function EngineerSection() {
                   className="w-full px-3 py-2 bg-neutral-950 border border-neutral-800 rounded-xl text-white text-sm"
                 />
               </div>
+              <label className="flex items-center gap-2 cursor-pointer text-xs font-semibold text-neutral-300">
+                <input
+                  type="checkbox"
+                  checked={editingCategory.published ?? true}
+                  onChange={(e) => setEditingCategory({ ...editingCategory, published: e.target.checked })}
+                  className="rounded bg-neutral-950 border-neutral-800 text-amber-500 focus:ring-0"
+                />
+                <span>Visible on live portfolio (Published)</span>
+              </label>
               <div className="flex justify-end gap-3 pt-2">
                 <button
                   type="button"
@@ -1292,6 +1770,20 @@ export function EngineerSection() {
                   className="w-full px-3 py-2 bg-neutral-950 border border-neutral-800 rounded-xl text-white text-sm"
                 />
               </div>
+              <label className="flex items-center gap-2 cursor-pointer text-xs font-semibold text-neutral-300">
+                <input
+                  type="checkbox"
+                  checked={editingItem.item.published ?? true}
+                  onChange={(e) =>
+                    setEditingItem({
+                      ...editingItem,
+                      item: { ...editingItem.item, published: e.target.checked },
+                    })
+                  }
+                  className="rounded bg-neutral-950 border-neutral-800 text-amber-500 focus:ring-0"
+                />
+                <span>Visible on live portfolio (Published)</span>
+              </label>
               <div className="flex justify-end gap-3 pt-2">
                 <button
                   type="button"
@@ -1316,7 +1808,12 @@ export function EngineerSection() {
       <ConfirmModal
         isOpen={!!deleteTarget}
         title={`Delete ${deleteTarget?.title}?`}
-        message="Are you sure you want to delete this item? This action cannot be undone."
+        message={
+          deleteTarget?.isCaseStudy
+            ? "Are you sure you want to delete this case study? This will remove all detailed breakdown, architecture, metrics, and gallery photos from the database while keeping the main project card intact."
+            : "Are you sure you want to delete this item? This action cannot be undone."
+        }
+        confirmLabel={deleteTarget?.isCaseStudy ? "Delete Case Study" : "Delete"}
         isLoading={deleting}
         onConfirm={confirmDelete}
         onCancel={() => setDeleteTarget(null)}

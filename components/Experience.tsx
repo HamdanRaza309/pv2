@@ -7,7 +7,10 @@ interface ExperienceProps {
 }
 
 export function Experience({ experience: propExp }: ExperienceProps = {}) {
-  const list = propExp && propExp.length > 0 ? propExp : staticExperience;
+  const rawList = propExp !== undefined ? propExp : staticExperience;
+  const list = rawList.filter((e: any) => e.published !== false);
+
+  if (list.length === 0) return null;
 
   return (
     <section id="experience" className="section bg-bg pb-12 sm:pb-16">

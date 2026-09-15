@@ -56,7 +56,7 @@ export interface ProjectDetail {
     database?: string[];
     cloud?: string[];
   };
-  gallery: { src: string; alt: string; caption: string }[];
+  gallery: { src: string; alt: string; caption?: string; published?: boolean }[];
   created_at?: string;
   updated_at?: string;
 }

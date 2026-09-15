@@ -45,7 +45,9 @@ export function ProjectDetail({
   currentIndex = 0,
   totalCount = 4,
 }: {
-  detail: ProjectDetailType;
+  detail: Omit<ProjectDetailType, "gallery"> & {
+    gallery?: { src: string; alt: string; caption?: string; published?: boolean }[];
+  };
   project: { title: string; live: string | null; github: string | null; slug?: string };
   prevProject?: NavProject | null;
   nextProject?: NavProject | null;
@@ -153,33 +155,36 @@ export function ProjectDetail({
 
           <hr className="border-fg/10" />
 
-          {detail.gallery && detail.gallery.length > 0 && (
+          {detail.gallery && detail.gallery.filter((item) => item && item.src && (item as any).published !== false).length > 0 && (
             <>
               <div>
                 <h2 className="font-display font-bold text-2xl sm:text-3xl tracking-tight mb-8 text-center">
                   Gallery
                 </h2>
                 <div className="grid sm:grid-cols-1 lg:grid-cols-2 gap-6">
-                  {detail.gallery.map((item, idx) => (
-                    <div
-                      key={idx}
-                      className="group rounded-2xl overflow-hidden border border-fg/10 bg-card shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
-                    >
-                      <div>
-                        <Image
-                          src={item.src}
-                          alt={item.alt}
-                          width={700}
-                          height={400}
-                          className="w-full h-auto rounded-2xl"
-                        />
+                  {detail.gallery
+                    .filter((item) => item && item.src && (item as any).published !== false)
+                    .map((item, idx) => (
+                      <div
+                        key={idx}
+                        className="group rounded-2xl overflow-hidden border border-fg/10 bg-card shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
+                      >
+                        <div>
+                          <Image
+                            src={item.src}
+                            alt={item.alt || "Project screenshot"}
+                            width={700}
+                            height={400}
+                            unoptimized={typeof item.src === "string" && item.src.startsWith("http")}
+                            className="w-full h-auto rounded-2xl"
+                          />
+                        </div>
+                        <div className="px-2 pb-5">
+                          <h3 className="font-display text-lg font-semibold text-fg">{item.alt}</h3>
+                          {item.caption && <p className="mt-2 text-sm text-muted">{item.caption}</p>}
+                        </div>
                       </div>
-                      <div className="px-2 pb-5">
-                        <h3 className="font-display text-lg font-semibold text-fg">{item.alt}</h3>
-                        <p className="mt-2 text-sm text-muted">{item.caption}</p>
-                      </div>
-                    </div>
-                  ))}
+                    ))}
                 </div>
               </div>
               <hr className="border-fg/10" />

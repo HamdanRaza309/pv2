@@ -8,11 +8,13 @@ import { SettingsSection } from "./components/SettingsSection";
 import { EngineerSection } from "./components/EngineerSection";
 import { ResearchSection } from "./components/ResearchSection";
 import { LifeSection } from "./components/LifeSection";
+import { MediaLibrary } from "./components/MediaLibrary";
 import {
   Code2,
   BookOpen,
   Coffee,
   Settings,
+  Image as ImageIcon,
   LogOut,
   ExternalLink,
   Shield,
@@ -21,7 +23,7 @@ import {
 
 export default function AdminDashboardPage() {
   const [activePersona, setActivePersona] = useState<
-    "settings" | "engineer" | "research" | "life"
+    "settings" | "engineer" | "research" | "life" | "media"
   >("engineer");
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -125,6 +127,7 @@ export default function AdminDashboardPage() {
                 { id: "engineer", label: "Engineer", icon: Code2, color: "text-amber-400" },
                 { id: "research", label: "Research", icon: BookOpen, color: "text-emerald-400" },
                 { id: "life", label: "Off the Clock", icon: Coffee, color: "text-rose-400" },
+                { id: "media", label: "Media & Assets", icon: ImageIcon, color: "text-purple-400" },
                 { id: "settings", label: "Site Settings", icon: Settings, color: "text-blue-400" },
               ].map((tab) => {
                 const Icon = tab.icon;
@@ -153,6 +156,7 @@ export default function AdminDashboardPage() {
           {activePersona === "engineer" && <EngineerSection />}
           {activePersona === "research" && <ResearchSection />}
           {activePersona === "life" && <LifeSection />}
+          {activePersona === "media" && <MediaLibrary />}
           {activePersona === "settings" && <SettingsSection />}
         </main>
       </div>

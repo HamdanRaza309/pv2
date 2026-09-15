@@ -1,20 +1,32 @@
 import Image from "next/image";
-import { about, experience, personal, projects } from "@/lib/data";
-import hamdanVisionCutout from "@/assets/hamdan_vision_cutout.png";
+import { about as staticAbout, experience as staticExperience, personal, projects as staticProjects } from "@/lib/data";
 import { Reveal } from "./Reveal";
+import type { SiteSettings, Experience } from "@/lib/supabase/types";
 
-export function About() {
+const VISION_PORTRAIT =
+  "https://tnpbnridezldixmriner.supabase.co/storage/v1/object/public/portfolio/avatars/hamdan_vision_cutout.png";
+
+interface AboutProps {
+  settings?: SiteSettings;
+  totalProjects?: number;
+  experience?: Experience[];
+}
+
+export function About({ settings, totalProjects: propProjects, experience: propExp }: AboutProps = {}) {
   // Compute stats strictly from real data
-  const totalProjects = projects.length;
+  const totalProjects = propProjects ?? staticProjects.length;
 
+  const expList = propExp ?? staticExperience;
   // Calculate actual years active from earliest experience entry (01/2024)
   const earliestYear = Math.min(
-    ...experience.map((e) => {
+    ...expList.map((e) => {
       const match = e.range.match(/\b(20\d{2})\b/);
       return match ? parseInt(match[1], 10) : 2024;
     })
   );
-  const yearsActive = Math.max(1, new Date().getFullYear() - earliestYear);
+  const yearsActive = Math.max(1, new Date().getFullYear() - (isFinite(earliestYear) ? earliestYear : 2024));
+
+  const paragraphs = settings?.about_paragraphs?.length ? settings.about_paragraphs : staticAbout.paragraphs;
 
   return (
     <section id="about" className="section bg-bg">
@@ -31,7 +43,7 @@ export function About() {
               </Reveal>
 
               <div className="mt-8 space-y-5 text-fg/80 leading-relaxed text-sm sm:text-base">
-                {about.paragraphs.map((p, i) => (
+                {paragraphs.map((p, i) => (
                   <Reveal key={i} delay={0.05 + i * 0.06}>
                     <p>{p}</p>
                   </Reveal>
@@ -65,15 +77,16 @@ export function About() {
             </div>
           </div>
 
-          {/* Right Column: Distinct Photo Card — NO duplicate hero crop, NO black box */}
+          {/* Right Column: Distinct Photo Card */}
           <div className="lg:col-span-5">
             <Reveal delay={0.2}>
               <div className="relative w-full aspect-[4/5] overflow-hidden rounded-[2.5rem] border border-fg/10 bg-gradient-to-b from-[#FAF2E7] to-[#F7E5CF] dark:from-neutral-900 dark:to-neutral-950 p-6 sm:p-8 flex items-center justify-center shadow-lg">
                 <div className="relative w-full h-full flex items-center justify-center">
                   <Image
-                    src={hamdanVisionCutout}
+                    src={VISION_PORTRAIT}
                     alt={`${personal.name} portrait`}
                     fill
+                    unoptimized={true}
                     className="object-contain object-bottom filter contrast-[1.02]"
                     style={{
                       maskImage: "linear-gradient(to bottom, black 85%, transparent 100%)",

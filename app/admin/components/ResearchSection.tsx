@@ -437,9 +437,15 @@ export function ResearchSection() {
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => togglePublish("research_interests", item.id, item.published)}
-                    className={`p-2 rounded-lg text-xs ${item.published ? "text-emerald-400" : "text-neutral-500"}`}
+                    className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                      item.published
+                        ? "bg-emerald-950/40 text-emerald-400 border border-emerald-800/40 hover:bg-emerald-900/50"
+                        : "bg-neutral-800/80 text-neutral-400 border border-neutral-700/50 hover:bg-neutral-800 hover:text-white"
+                    }`}
+                    title={item.published ? "Visible on site (click to hide)" : "Hidden from site (click to show)"}
                   >
-                    {item.published ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
+                    {item.published ? <Eye className="w-3.5 h-3.5 text-emerald-400" /> : <EyeOff className="w-3.5 h-3.5 text-neutral-400" />}
+                    <span>{item.published ? "Visible" : "Hidden"}</span>
                   </button>
                   <button
                     onClick={() => setEditingInterest(item)}
@@ -504,9 +510,15 @@ export function ResearchSection() {
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => togglePublish("publications", p.id, p.published)}
-                      className={`p-2 rounded-lg text-xs ${p.published ? "text-emerald-400" : "text-neutral-500"}`}
+                      className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                        p.published
+                          ? "bg-emerald-950/40 text-emerald-400 border border-emerald-800/40 hover:bg-emerald-900/50"
+                          : "bg-neutral-800/80 text-neutral-400 border border-neutral-700/50 hover:bg-neutral-800 hover:text-white"
+                      }`}
+                      title={p.published ? "Visible on site (click to hide)" : "Hidden from site (click to show)"}
                     >
-                      {p.published ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
+                      {p.published ? <Eye className="w-3.5 h-3.5 text-emerald-400" /> : <EyeOff className="w-3.5 h-3.5 text-neutral-400" />}
+                      <span>{p.published ? "Visible" : "Hidden"}</span>
                     </button>
                     <button
                       onClick={() => setEditingPublication(p)}
@@ -581,9 +593,15 @@ export function ResearchSection() {
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => togglePublish("research_projects", p.id, p.published)}
-                    className={`p-2 rounded-lg text-xs ${p.published ? "text-emerald-400" : "text-neutral-500"}`}
+                    className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                      p.published
+                        ? "bg-emerald-950/40 text-emerald-400 border border-emerald-800/40 hover:bg-emerald-900/50"
+                        : "bg-neutral-800/80 text-neutral-400 border border-neutral-700/50 hover:bg-neutral-800 hover:text-white"
+                    }`}
+                    title={p.published ? "Visible on site (click to hide)" : "Hidden from site (click to show)"}
                   >
-                    {p.published ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
+                    {p.published ? <Eye className="w-3.5 h-3.5 text-emerald-400" /> : <EyeOff className="w-3.5 h-3.5 text-neutral-400" />}
+                    <span>{p.published ? "Visible" : "Hidden"}</span>
                   </button>
                   <button
                     onClick={() => setEditingProject(p)}
@@ -645,9 +663,15 @@ export function ResearchSection() {
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => togglePublish("affiliations", a.id, a.published)}
-                    className={`p-2 rounded-lg text-xs ${a.published ? "text-emerald-400" : "text-neutral-500"}`}
+                    className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                      a.published
+                        ? "bg-emerald-950/40 text-emerald-400 border border-emerald-800/40 hover:bg-emerald-900/50"
+                        : "bg-neutral-800/80 text-neutral-400 border border-neutral-700/50 hover:bg-neutral-800 hover:text-white"
+                    }`}
+                    title={a.published ? "Visible on site (click to hide)" : "Hidden from site (click to show)"}
                   >
-                    {a.published ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
+                    {a.published ? <Eye className="w-3.5 h-3.5 text-emerald-400" /> : <EyeOff className="w-3.5 h-3.5 text-neutral-400" />}
+                    <span>{a.published ? "Visible" : "Hidden"}</span>
                   </button>
                   <button
                     onClick={() => setEditingAffiliation(a)}
@@ -706,9 +730,15 @@ export function ResearchSection() {
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => togglePublish("coursework", c.id, c.published)}
-                    className={`p-2 rounded-lg text-xs ${c.published ? "text-emerald-400" : "text-neutral-500"}`}
+                    className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                      c.published
+                        ? "bg-emerald-950/40 text-emerald-400 border border-emerald-800/40 hover:bg-emerald-900/50"
+                        : "bg-neutral-800/80 text-neutral-400 border border-neutral-700/50 hover:bg-neutral-800 hover:text-white"
+                    }`}
+                    title={c.published ? "Visible on site (click to hide)" : "Hidden from site (click to show)"}
                   >
-                    {c.published ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
+                    {c.published ? <Eye className="w-3.5 h-3.5 text-emerald-400" /> : <EyeOff className="w-3.5 h-3.5 text-neutral-400" />}
+                    <span>{c.published ? "Visible" : "Hidden"}</span>
                   </button>
                   <button
                     onClick={() => setEditingCoursework(c)}
@@ -762,6 +792,15 @@ export function ResearchSection() {
                   className="w-full px-3 py-2 bg-neutral-950 border border-neutral-800 rounded-xl text-white text-sm"
                 />
               </div>
+              <label className="flex items-center gap-2 cursor-pointer text-xs font-semibold text-neutral-300">
+                <input
+                  type="checkbox"
+                  checked={editingInterest.published ?? true}
+                  onChange={(e) => setEditingInterest({ ...editingInterest, published: e.target.checked })}
+                  className="rounded bg-neutral-950 border-neutral-800 text-amber-500 focus:ring-0"
+                />
+                <span>Visible on live portfolio (Published)</span>
+              </label>
               <div className="flex justify-end gap-3 pt-2">
                 <button
                   type="button"
@@ -850,6 +889,15 @@ export function ResearchSection() {
                   className="w-full px-3 py-2 bg-neutral-950 border border-neutral-800 rounded-xl text-white text-sm"
                 />
               </div>
+              <label className="flex items-center gap-2 cursor-pointer text-xs font-semibold text-neutral-300">
+                <input
+                  type="checkbox"
+                  checked={editingPublication.published ?? true}
+                  onChange={(e) => setEditingPublication({ ...editingPublication, published: e.target.checked })}
+                  className="rounded bg-neutral-950 border-neutral-800 text-amber-500 focus:ring-0"
+                />
+                <span>Visible on live portfolio (Published)</span>
+              </label>
               <div className="flex justify-end gap-3 pt-2">
                 <button
                   type="button"
@@ -918,6 +966,15 @@ export function ResearchSection() {
                   className="w-full px-3 py-2 bg-neutral-950 border border-neutral-800 rounded-xl text-white text-sm"
                 />
               </div>
+              <label className="flex items-center gap-2 cursor-pointer text-xs font-semibold text-neutral-300">
+                <input
+                  type="checkbox"
+                  checked={editingProject.published ?? true}
+                  onChange={(e) => setEditingProject({ ...editingProject, published: e.target.checked })}
+                  className="rounded bg-neutral-950 border-neutral-800 text-amber-500 focus:ring-0"
+                />
+                <span>Visible on live portfolio (Published)</span>
+              </label>
               <div className="flex justify-end gap-3 pt-2">
                 <button
                   type="button"
@@ -988,6 +1045,15 @@ export function ResearchSection() {
                   className="w-full px-3 py-2 bg-neutral-950 border border-neutral-800 rounded-xl text-white text-sm"
                 />
               </div>
+              <label className="flex items-center gap-2 cursor-pointer text-xs font-semibold text-neutral-300">
+                <input
+                  type="checkbox"
+                  checked={editingAffiliation.published ?? true}
+                  onChange={(e) => setEditingAffiliation({ ...editingAffiliation, published: e.target.checked })}
+                  className="rounded bg-neutral-950 border-neutral-800 text-amber-500 focus:ring-0"
+                />
+                <span>Visible on live portfolio (Published)</span>
+              </label>
               <div className="flex justify-end gap-3 pt-2">
                 <button
                   type="button"
@@ -1045,6 +1111,15 @@ export function ResearchSection() {
                   className="w-full px-3 py-2 bg-neutral-950 border border-neutral-800 rounded-xl text-white text-sm"
                 />
               </div>
+              <label className="flex items-center gap-2 cursor-pointer text-xs font-semibold text-neutral-300">
+                <input
+                  type="checkbox"
+                  checked={editingCoursework.published ?? true}
+                  onChange={(e) => setEditingCoursework({ ...editingCoursework, published: e.target.checked })}
+                  className="rounded bg-neutral-950 border-neutral-800 text-amber-500 focus:ring-0"
+                />
+                <span>Visible on live portfolio (Published)</span>
+              </label>
               <div className="flex justify-end gap-3 pt-2">
                 <button
                   type="button"
