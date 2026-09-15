@@ -10,7 +10,7 @@ export function Footer() {
           {/* Brand Info */}
           <div className="md:col-span-5">
             <a
-              href="#top"
+              href="/"
               className="inline-block transition-opacity hover:opacity-80"
             >
               <span className="font-serif italic text-3xl font-medium text-fg">

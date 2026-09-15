@@ -1,33 +1,18 @@
-import { Navbar } from "@/components/Navbar";
-import { Hero } from "@/components/Hero";
-import { About } from "@/components/About";
-import { Services } from "@/components/Services";
-import { Experience } from "@/components/Experience";
-import { TechStack } from "@/components/TechStack";
-import { HorizontalProjects } from "@/components/HorizontalProjects";
-import { MoreBuilds } from "@/components/MoreBuilds";
-import { Contact } from "@/components/Contact";
-import { Footer } from "@/components/Footer";
+import type { Metadata } from "next";
 import { Splash } from "@/components/Splash";
-import { Cursor } from "@/components/Cursor";
+import { GatePage } from "@/components/GatePage";
+
+export const metadata: Metadata = {
+  title: "Hamdan Raza — Engineer · Researcher · Human",
+  description:
+    "Three sides of Hamdan Raza: Full-Stack AI Engineer, NeuroAI Researcher, and the person behind the code. Choose your perspective.",
+};
 
 export default function Home() {
   return (
     <>
       <Splash />
-      <Cursor />
-      <Navbar />
-      <main>
-        <Hero />
-        <About />
-        <Services />
-        <Experience />
-        <TechStack />
-        <HorizontalProjects />
-        <MoreBuilds />
-        <Contact />
-      </main>
-      <Footer />
+      <GatePage />
     </>
   );
 }

@@ -58,7 +58,7 @@ export function ProjectDetail({
       <div className="fixed top-5 sm:top-6 inset-x-0 z-40 px-4 sm:px-8 pointer-events-none">
         <div className="container-x flex items-center justify-between">
           <Link
-            href="/#projects"
+            href="/engineer#projects"
             className="pointer-events-auto inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider px-4 py-2 sm:px-4.5 sm:py-2.5 rounded-full border border-white/20 bg-neutral-900/85 hover:bg-neutral-900 backdrop-blur-md text-white shadow-lg transition active:scale-[0.98] group"
           >
             <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
@@ -285,7 +285,7 @@ export function ProjectDetail({
             {/* Prev */}
             {prevProject ? (
               <Link
-                href={`/projects/${prevProject.slug}`}
+                href={`/engineer/projects/${prevProject.slug}`}
                 className="group flex items-center gap-2 sm:gap-2.5 text-left hover:opacity-80 transition min-w-0 flex-1"
                 title={`Previous Case Study: ${prevProject.title}`}
               >
@@ -321,7 +321,7 @@ export function ProjectDetail({
             {/* Next */}
             {nextProject ? (
               <Link
-                href={`/projects/${nextProject.slug}`}
+                href={`/engineer/projects/${nextProject.slug}`}
                 className="group flex items-center justify-end gap-2 sm:gap-2.5 text-right hover:opacity-80 transition min-w-0 flex-1"
                 title={`Next Case Study: ${nextProject.title}`}
               >

@@ -23,6 +23,48 @@
     --card: 18 18 18;
   }
 
+  /* ── Research persona — academic, muted, journal feel ────── */
+  .persona-research {
+    --bg: 250 248 245;        /* Warm paper-white */
+    --fg: 27 42 74;           /* Navy ink */
+    --muted: 122 138 158;     /* Slate blue muted */
+    --accent: 107 143 113;    /* Sage green accent */
+    --accent-warm: 107 143 113;
+    --border: 215 210 200;    /* Warm parchment border */
+    --card: 255 253 250;      /* Slightly warmer white card */
+  }
+
+  .dark .persona-research {
+    --bg: 20 26 36;           /* Deep navy charcoal */
+    --fg: 232 226 216;        /* Warm cream text */
+    --muted: 140 148 160;
+    --accent: 142 178 148;    /* Lighter sage */
+    --accent-warm: 142 178 148;
+    --border: 40 46 56;
+    --card: 26 32 42;
+  }
+
+  /* ── Life persona — warm, colorful, personal ────────────── */
+  .persona-life {
+    --bg: 255 249 240;        /* Warm cream */
+    --fg: 45 24 16;           /* Warm dark brown */
+    --muted: 158 139 126;     /* Warm taupe muted */
+    --accent: 212 118 91;     /* Terracotta / coral */
+    --accent-warm: 212 118 91;
+    --border: 230 218 200;    /* Warm sand border */
+    --card: 255 252 247;      /* Cream-tinted card */
+  }
+
+  .dark .persona-life {
+    --bg: 26 20 18;           /* Warm charcoal */
+    --fg: 240 230 216;        /* Warm cream text */
+    --muted: 170 150 130;
+    --accent: 228 148 118;    /* Lighter coral */
+    --accent-warm: 228 148 118;
+    --border: 50 40 34;
+    --card: 34 28 24;
+  }
+
   * {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;

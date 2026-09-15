@@ -1,13 +1,34 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
-import { nav, personal } from "@/lib/data";
+import { PersonaSwitcher } from "./PersonaSwitcher";
+import { personal } from "@/lib/data";
 
-export function Navbar() {
+/**
+ * Shared Navbar rendered on all persona pages (/engineer, /research, /life).
+ * Accepts optional section nav links — each persona page passes its own section anchors.
+ */
+export function Navbar({
+  navItems,
+}: {
+  navItems?: { label: string; href: string }[];
+}) {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
+
+  // Determine the current persona root for the logo link
+  const personaRoot = pathname.startsWith("/engineer")
+    ? "/engineer"
+    : pathname.startsWith("/research")
+    ? "/research"
+    : pathname.startsWith("/life")
+    ? "/life"
+    : "/";
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
@@ -25,30 +46,40 @@ export function Navbar() {
       }`}
     >
       <div className="container-x flex h-20 items-center justify-between">
-        {/* Logo/name on the left, styled in italic serif with a trailing period */}
-        <a
-          href="#top"
-          className="group flex items-center transition-opacity hover:opacity-80"
-        >
-          <span className="font-serif italic text-2xl sm:text-3xl font-normal text-fg tracking-tight">
-            {personal.name.split(" ")[0]}.
-          </span>
-        </a>
+        {/* Logo/name on the left, links to current persona root */}
+        <div className="flex items-center gap-3 sm:gap-4">
+          <Link
+            href={personaRoot}
+            className="group flex items-center transition-opacity hover:opacity-80"
+          >
+            <span className="font-serif italic text-2xl sm:text-3xl font-normal text-fg tracking-tight">
+              {personal.name.split(" ")[0]}.
+            </span>
+          </Link>
 
-        {/* Centered horizontal nav links in simple sans-serif */}
-        <nav className="hidden md:flex items-center gap-8">
-          {nav.map((item) => (
-            <a
-              key={item.href}
-              href={item.href}
-              className="text-xs uppercase tracking-[0.18em] text-fg/70 hover:text-fg transition-colors"
-            >
-              {item.label}
-            </a>
-          ))}
-        </nav>
+          {/* Persona Switcher pills */}
+          <span className="hidden md:inline-block h-5 w-[1px] bg-fg/15" />
+          <div className="hidden md:block">
+            <PersonaSwitcher />
+          </div>
+        </div>
 
-        {/* Far right: Theme Toggle + Black pill-shaped Contact button */}
+        {/* Centered horizontal nav links (persona-specific sections) */}
+        {navItems && navItems.length > 0 && (
+          <nav className="hidden lg:flex items-center gap-8">
+            {navItems.map((item) => (
+              <a
+                key={item.href}
+                href={item.href}
+                className="text-xs uppercase tracking-[0.18em] text-fg/70 hover:text-fg transition-colors"
+              >
+                {item.label}
+              </a>
+            ))}
+          </nav>
+        )}
+
+        {/* Far right: Theme Toggle + Contact button */}
         <div className="flex items-center gap-3">
           <ThemeToggle />
           <a
@@ -72,7 +103,12 @@ export function Navbar() {
       {open && (
         <div className="md:hidden border-b border-fg/10 bg-bg/95 backdrop-blur-lg px-6 py-6 transition-all">
           <nav className="flex flex-col gap-4">
-            {nav.map((item) => (
+            {/* Persona switcher in mobile drawer */}
+            <div className="pb-3 mb-1 border-b border-fg/10">
+              <PersonaSwitcher />
+            </div>
+
+            {navItems?.map((item) => (
               <a
                 key={item.href}
                 href={item.href}

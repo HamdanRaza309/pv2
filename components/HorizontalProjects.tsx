@@ -143,7 +143,7 @@ export function HorizontalProjects() {
 
                       {detail && (
                         <Link
-                          href={`/projects/${p.slug}`}
+                          href={`/engineer/projects/${p.slug}`}
                           className="inline-flex items-center gap-1.5 font-mono text-xs uppercase tracking-wider text-fg/80 hover:text-fg ml-auto py-1"
                         >
                           <span>Case study</span>
