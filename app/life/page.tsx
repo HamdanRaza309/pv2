@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 import Image from "next/image";
 import { Heart, Camera, Sparkles, Star } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
@@ -21,6 +22,12 @@ export default async function LifePage() {
     getSiteSettings(),
   ]);
 
+  const enabledAspects = settings.enabled_aspects || ["engineer", "research", "life"];
+  if (!enabledAspects.includes("life")) {
+    const fallback = enabledAspects[0] === "life" ? "/life" : `/${enabledAspects[0]}`;
+    redirect(fallback || "/");
+  }
+
   const {
     bio,
     hobbies,
@@ -39,7 +46,7 @@ export default async function LifePage() {
 
   return (
     <div className="persona-life bg-bg text-fg min-h-screen">
-      <Navbar navItems={lifeNav} />
+      <Navbar navItems={lifeNav} enabledAspects={enabledAspects} />
 
       <main>
         {/* ── Hero ─────────────────────────────────────── */}

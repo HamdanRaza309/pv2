@@ -14,8 +14,10 @@ import { personal } from "@/lib/data";
  */
 export function Navbar({
   navItems,
+  enabledAspects,
 }: {
   navItems?: { label: string; href: string }[];
+  enabledAspects?: string[];
 }) {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
@@ -60,7 +62,7 @@ export function Navbar({
           {/* Persona Switcher pills */}
           <span className="hidden md:inline-block h-5 w-[1px] bg-fg/15" />
           <div className="hidden md:block">
-            <PersonaSwitcher />
+            <PersonaSwitcher enabledAspects={enabledAspects} />
           </div>
         </div>
 
@@ -105,7 +107,7 @@ export function Navbar({
           <nav className="flex flex-col gap-4">
             {/* Persona switcher in mobile drawer */}
             <div className="pb-3 mb-1 border-b border-fg/10">
-              <PersonaSwitcher />
+              <PersonaSwitcher enabledAspects={enabledAspects} />
             </div>
 
             {navItems?.map((item) => (

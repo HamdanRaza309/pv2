@@ -5,12 +5,13 @@ import { createClient } from "@/lib/supabase/client";
 import { useToast } from "./Toast";
 import { ImageUploader } from "./ImageUploader";
 import { revalidatePortfolio } from "@/app/admin/actions";
-import { Loader2, Save, Plus, Trash2 } from "lucide-react";
+import { Loader2, Save, Plus, Trash2, Eye, EyeOff, Layers } from "lucide-react";
 import type { SiteSettings } from "@/lib/supabase/types";
 
 export function SettingsSection() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [togglingAspectId, setTogglingAspectId] = useState<string | null>(null);
   const [settings, setSettings] = useState<Partial<SiteSettings>>({});
   const { toast } = useToast();
 
@@ -30,9 +31,25 @@ export function SettingsSection() {
         const resolvedPortrait = isLegacy
           ? "https://tnpbnridezldixmriner.supabase.co/storage/v1/object/public/portfolio/avatars/hamdan_cutout.png"
           : data.portrait_url;
+
+        let parsedSocials = data.socials;
+        if (typeof parsedSocials === "string") {
+          try {
+            parsedSocials = JSON.parse(parsedSocials);
+          } catch {}
+        }
+
+        const enabledAspects =
+          Array.isArray(data.enabled_aspects) && data.enabled_aspects.length > 0
+            ? data.enabled_aspects
+            : Array.isArray(parsedSocials?.enabled_aspects) && parsedSocials.enabled_aspects.length > 0
+            ? parsedSocials.enabled_aspects
+            : ["engineer", "research", "life"];
+
         setSettings({
           ...data,
           portrait_url: resolvedPortrait,
+          enabled_aspects: enabledAspects,
         });
       }
     } catch (err: any) {
@@ -47,11 +64,80 @@ export function SettingsSection() {
     fetchSettings();
   }, []);
 
+  const toggleAspect = async (aspectId: string) => {
+    const current = settings.enabled_aspects || ["engineer", "research", "life"];
+    const isEnabled = current.includes(aspectId);
+    if (isEnabled && current.length <= 1) {
+      toast("At least one portfolio aspect must remain active.", "error");
+      return;
+    }
+
+    const updated = isEnabled
+      ? current.filter((id) => id !== aspectId)
+      : [...current, aspectId];
+
+    const updatedSocials = {
+      ...(settings.socials || {}),
+      enabled_aspects: updated,
+    };
+
+    // Optimistic UI update
+    setSettings((prev) => ({
+      ...prev,
+      enabled_aspects: updated,
+      socials: updatedSocials,
+    }));
+
+    try {
+      setTogglingAspectId(aspectId);
+      const supabase = createClient();
+      const { error } = await supabase
+        .from("site_settings")
+        .update({
+          socials: updatedSocials,
+        })
+        .eq("id", 1);
+
+      if (error) throw error;
+
+      await revalidatePortfolio();
+
+      const aspectNames: Record<string, string> = {
+        engineer: "The Engineer",
+        research: "Research",
+        life: "Off the Clock",
+      };
+      toast(
+        `${aspectNames[aspectId] || aspectId} is now ${isEnabled ? "hidden" : "visible"} on site!`,
+        "success"
+      );
+    } catch (err: any) {
+      console.error("Failed to update aspect visibility:", err);
+      toast(err.message || "Failed to update aspect visibility", "error");
+      // Revert on failure
+      setSettings((prev) => ({
+        ...prev,
+        enabled_aspects: current,
+        socials: {
+          ...(prev.socials || {}),
+          enabled_aspects: current,
+        },
+      }));
+    } finally {
+      setTogglingAspectId(null);
+    }
+  };
+
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       setSaving(true);
       const supabase = createClient();
+
+      const enabledAspects =
+        settings.enabled_aspects && settings.enabled_aspects.length > 0
+          ? settings.enabled_aspects
+          : ["engineer", "research", "life"];
 
       const payload = {
         id: 1,
@@ -66,7 +152,10 @@ export function SettingsSection() {
         email: settings.email || "",
         resume_url: settings.resume_url || "",
         portrait_url: settings.portrait_url || null,
-        socials: settings.socials || {},
+        socials: {
+          ...(settings.socials || {}),
+          enabled_aspects: enabledAspects,
+        },
         about_paragraphs: settings.about_paragraphs || [],
       };
 
@@ -112,6 +201,8 @@ export function SettingsSection() {
     );
   }
 
+  const activeAspectsCount = (settings.enabled_aspects || ["engineer", "research", "life"]).length;
+
   return (
     <form onSubmit={handleSave} className="space-y-8 max-w-4xl">
       <div className="flex items-center justify-between border-b border-neutral-800 pb-4">
@@ -127,6 +218,112 @@ export function SettingsSection() {
           {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
           <span>{saving ? "Saving..." : "Save Settings"}</span>
         </button>
+      </div>
+
+      {/* Portfolio Aspects & Persona Visibility */}
+      <div className="p-5 rounded-2xl bg-neutral-900/90 border border-neutral-800 space-y-4 shadow-xl">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div className="flex items-center gap-2.5">
+            <div className="p-2 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/20">
+              <Layers className="w-5 h-5" />
+            </div>
+            <div>
+              <h3 className="text-base font-semibold text-white">Portfolio Aspects Visibility</h3>
+              <p className="text-xs text-neutral-400">
+                Choose which personas are publicly visible on your site. If only 1 aspect is enabled, visitors will automatically land on it.
+              </p>
+            </div>
+          </div>
+          <div className="text-xs font-medium px-3 py-1 rounded-full bg-neutral-800 text-neutral-300 self-start sm:self-auto border border-neutral-700/50">
+            {activeAspectsCount} / 3 Active
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-2">
+          {[
+            {
+              id: "engineer",
+              title: "The Engineer",
+              route: "/engineer",
+              desc: "Full-stack systems, architecture, and production builds.",
+            },
+            {
+              id: "research",
+              title: "Research & Academia",
+              route: "/research",
+              desc: "NeuroAI, BCI studies, coursework, and publications.",
+            },
+            {
+              id: "life",
+              title: "Off the Clock",
+              route: "/life",
+              desc: "Hobbies, photo gallery, travel, and personal interests.",
+            },
+          ].map((aspect) => {
+            const isVisible = (settings.enabled_aspects || ["engineer", "research", "life"]).includes(aspect.id);
+            return (
+              <div
+                key={aspect.id}
+                className={`flex flex-col justify-between p-4 rounded-xl border transition-all duration-200 ${
+                  isVisible
+                    ? "bg-neutral-800/40 border-neutral-700 shadow-sm"
+                    : "bg-neutral-950/40 border-neutral-800/80 opacity-60 hover:opacity-80"
+                }`}
+              >
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="font-semibold text-sm text-white">{aspect.title}</span>
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-neutral-800 text-neutral-400 border border-neutral-750">
+                      {aspect.route}
+                    </span>
+                  </div>
+                  <p className="text-xs text-neutral-400 leading-relaxed">{aspect.desc}</p>
+                </div>
+
+                <div className="pt-4 mt-3 border-t border-neutral-800/80 flex items-center justify-between">
+                  <span
+                    className={`inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full ${
+                      isVisible
+                        ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
+                        : "bg-neutral-800 text-neutral-400 border border-neutral-700"
+                    }`}
+                  >
+                    <span className={`w-1.5 h-1.5 rounded-full ${isVisible ? "bg-emerald-400 animate-pulse" : "bg-neutral-500"}`} />
+                    {isVisible ? "Visible" : "Hidden"}
+                  </span>
+
+                  <button
+                    type="button"
+                    disabled={togglingAspectId === aspect.id}
+                    onClick={() => toggleAspect(aspect.id)}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg transition-colors disabled:opacity-50 ${
+                      isVisible
+                        ? "bg-neutral-800 hover:bg-neutral-750 text-neutral-200 border border-neutral-700 hover:border-neutral-600"
+                        : "bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30"
+                    }`}
+                  >
+                    {togglingAspectId === aspect.id ? (
+                      <>
+                        <Loader2 className="w-3.5 h-3.5 animate-spin text-amber-400" />
+                        <span>Updating...</span>
+                      </>
+                    ) : isVisible ? (
+                      <>
+                        <EyeOff className="w-3.5 h-3.5" />
+                        <span>Hide</span>
+                      </>
+                    ) : (
+                      <>
+                        <Eye className="w-3.5 h-3.5" />
+                        <span>Show</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

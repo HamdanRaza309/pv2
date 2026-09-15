@@ -45,7 +45,26 @@ const item = {
   show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] } },
 };
 
-export function GatePage() {
+interface GatePageProps {
+  enabledAspects?: string[];
+}
+
+export function GatePage({ enabledAspects = ["engineer", "research", "life"] }: GatePageProps) {
+  const activeAspects = enabledAspects.length > 0 ? enabledAspects : ["engineer", "research", "life"];
+  const visiblePersonas = personas.filter((p) => {
+    if (p.href === "/engineer") return activeAspects.includes("engineer");
+    if (p.href === "/research") return activeAspects.includes("research");
+    if (p.href === "/life") return activeAspects.includes("life");
+    return true;
+  });
+
+  const gridClass =
+    visiblePersonas.length === 3
+      ? "sm:grid-cols-3 max-w-3xl"
+      : visiblePersonas.length === 2
+      ? "sm:grid-cols-2 max-w-2xl"
+      : "max-w-md";
+
   return (
     <div className="min-h-[100svh] flex flex-col items-center justify-center px-6 py-16 bg-bg text-fg">
       <motion.div
@@ -66,15 +85,15 @@ export function GatePage() {
           variants={item}
           className="mt-6 font-mono text-xs sm:text-sm uppercase tracking-[0.2em] text-muted text-center"
         >
-          Which side of me would you like to see?
+          {visiblePersonas.length === 1 ? "Welcome to my portfolio" : "Which side of me would you like to see?"}
         </motion.p>
 
-        {/* Three persona cards */}
+        {/* Persona cards */}
         <motion.div
           variants={item}
-          className="mt-12 sm:mt-16 grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5 w-full"
+          className={`mt-12 sm:mt-16 grid grid-cols-1 gap-4 sm:gap-5 w-full ${gridClass}`}
         >
-          {personas.map(({ label, href, icon: Icon, description, accent }) => (
+          {visiblePersonas.map(({ label, href, icon: Icon, description, accent }) => (
             <Link
               key={href}
               href={href}

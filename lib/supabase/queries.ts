@@ -53,7 +53,24 @@ export async function getSiteSettings(): Promise<SiteSettings> {
           data.portrait_url =
             "https://tnpbnridezldixmriner.supabase.co/storage/v1/object/public/portfolio/avatars/hamdan_cutout.png";
         }
-        return data as SiteSettings;
+        let socials = data.socials;
+        if (typeof socials === "string") {
+          try {
+            socials = JSON.parse(socials);
+          } catch {}
+        }
+
+        const enabledAspects =
+          Array.isArray(data.enabled_aspects) && data.enabled_aspects.length > 0
+            ? data.enabled_aspects
+            : Array.isArray(socials?.enabled_aspects) && socials.enabled_aspects.length > 0
+            ? socials.enabled_aspects
+            : ["engineer", "research", "life"];
+
+        return {
+          ...data,
+          enabled_aspects: enabledAspects,
+        } as SiteSettings;
       }
     } catch (err) {
       console.warn("Failed to fetch site settings from Supabase, falling back to static data.", err);
@@ -75,6 +92,7 @@ export async function getSiteSettings(): Promise<SiteSettings> {
     resume_url: staticData.personal.resume,
     portrait_url:
       "https://tnpbnridezldixmriner.supabase.co/storage/v1/object/public/portfolio/avatars/hamdan_cutout.png",
+    enabled_aspects: ["engineer", "research", "life"],
     socials: staticData.personal.socials,
     about_paragraphs: staticData.about.paragraphs,
   };

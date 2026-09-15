@@ -11,14 +11,31 @@ const personas = [
   { label: "Off the Clock", href: "/life", icon: Coffee },
 ] as const;
 
-export function PersonaSwitcher() {
+interface PersonaSwitcherProps {
+  enabledAspects?: string[];
+}
+
+export function PersonaSwitcher({ enabledAspects = ["engineer", "research", "life"] }: PersonaSwitcherProps) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
+  const activeAspects = enabledAspects.length > 0 ? enabledAspects : ["engineer", "research", "life"];
+  const visiblePersonas = personas.filter((p) => {
+    if (p.href === "/engineer") return activeAspects.includes("engineer");
+    if (p.href === "/research") return activeAspects.includes("research");
+    if (p.href === "/life") return activeAspects.includes("life");
+    return true;
+  });
+
   // Determine which persona is active
-  const active = personas.find((p) => pathname.startsWith(p.href)) ?? personas[0];
+  const active =
+    visiblePersonas.find((p) => pathname.startsWith(p.href)) ||
+    personas.find((p) => pathname.startsWith(p.href)) ||
+    visiblePersonas[0] ||
+    personas[0];
   const ActiveIcon = active.icon;
+  const hasMultiple = visiblePersonas.length > 1;
 
   // Close on outside click
   useEffect(() => {
@@ -35,6 +52,15 @@ export function PersonaSwitcher() {
   useEffect(() => {
     setOpen(false);
   }, [pathname]);
+
+  if (!hasMultiple) {
+    return (
+      <div className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[10px] sm:text-[11px] uppercase tracking-[0.12em] font-mono border border-fg/15 bg-fg/[0.03] whitespace-nowrap text-fg/70">
+        <ActiveIcon className="h-3 w-3" />
+        <span>{active.label}</span>
+      </div>
+    );
+  }
 
   return (
     <div ref={ref} className="relative">
@@ -57,7 +83,7 @@ export function PersonaSwitcher() {
       {/* Dropdown */}
       {open && (
         <div className="absolute left-0 top-full mt-2 min-w-[180px] rounded-xl border border-fg/10 bg-bg/95 backdrop-blur-xl shadow-lg overflow-hidden z-50 animate-fade-in">
-          {personas.map(({ label, href, icon: Icon }) => {
+          {visiblePersonas.map(({ label, href, icon: Icon }) => {
             const isActive = active.href === href;
             return (
               <Link

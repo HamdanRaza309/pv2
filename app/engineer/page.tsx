@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 import { Navbar } from "@/components/Navbar";
 import { Hero } from "@/components/Hero";
 import { About } from "@/components/About";
@@ -27,10 +28,16 @@ export default async function EngineerPage() {
     getEngineerContent(),
   ]);
 
+  const enabledAspects = settings.enabled_aspects || ["engineer", "research", "life"];
+  if (!enabledAspects.includes("engineer")) {
+    const fallback = enabledAspects[0] === "life" ? "/life" : `/${enabledAspects[0]}`;
+    redirect(fallback || "/");
+  }
+
   return (
     <div className="persona-engineer">
       <Cursor />
-      <Navbar navItems={nav} />
+      <Navbar navItems={nav} enabledAspects={enabledAspects} />
       <main>
         <Hero settings={settings} />
         <About

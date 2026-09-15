@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 import { BookOpen, FlaskConical, GraduationCap, Building2, BookMarked } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
@@ -20,6 +21,12 @@ export default async function ResearchPage() {
     getSiteSettings(),
   ]);
 
+  const enabledAspects = settings.enabled_aspects || ["engineer", "research", "life"];
+  if (!enabledAspects.includes("research")) {
+    const fallback = enabledAspects[0] === "life" ? "/life" : `/${enabledAspects[0]}`;
+    redirect(fallback || "/");
+  }
+
   const {
     bio,
     interests: researchInterests,
@@ -36,7 +43,7 @@ export default async function ResearchPage() {
 
   return (
     <div className="persona-research bg-bg text-fg min-h-screen">
-      <Navbar navItems={researchNav} />
+      <Navbar navItems={researchNav} enabledAspects={enabledAspects} />
 
       <main>
         {/* ── Hero ─────────────────────────────────────── */}
