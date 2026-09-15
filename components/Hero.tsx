@@ -105,37 +105,28 @@ export function Hero({ settings }: HeroProps = {}) {
             </div>
 
             {/* Right: Role, Location, & Action Buttons */}
-            <div className="flex flex-col items-end gap-5">
-              <div className="text-right">
-                <div className="font-mono text-xs uppercase tracking-widest text-muted">
-                  Role
-                </div>
-                <div className="font-display font-semibold text-lg text-fg tracking-tight">
-                  {profile.role}
-                </div>
-                <div className="flex items-center justify-end gap-1.5 mt-1 text-xs text-muted font-mono">
-                  <MapPin className="h-3 w-3" />
-                  <span>{profile.location.split(",")[0]}, PK</span>
-                </div>
+            <div className="flex flex-col items-end text-right">
+              <div className="font-display font-bold uppercase tracking-tight text-xl lg:text-[1.85rem] xl:text-[2.15rem] leading-[0.95] text-fg">
+                FULL-STACK <br />
+                AI ENGINEER
               </div>
 
-              <div className="flex items-center gap-3">
-                <a
-                  href="#projects"
-                  className="btn-primary !px-5 !py-2.5 text-xs tracking-wider uppercase font-mono"
-                >
-                  <span>Selected Works</span>
-                  <ArrowDown className="h-3.5 w-3.5" />
+              {/* Pill CTA buttons */}
+              <div className="mt-6 flex flex-wrap items-center gap-2.5">
+                <a href="#contact" className="btn-primary">
+                  <span>Get in touch</span>
+                  <ArrowUpRight className="h-3.5 w-3.5" />
                 </a>
-
+                <a href="#projects" className="btn-secondary">
+                  View work
+                </a>
                 <a
-                  href={profile.resume_url}
+                  href={personal.resume}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="btn-secondary !px-4 !py-2.5 text-xs tracking-wider uppercase font-mono"
+                  className="btn-secondary"
                 >
-                  <span>CV</span>
-                  <ArrowUpRight className="h-3.5 w-3.5" />
+                  Resume
                 </a>
               </div>
             </div>
@@ -222,8 +213,7 @@ export function Hero({ settings }: HeroProps = {}) {
         </div>
 
         {/* Bottom Ticker/Meta bar */}
-        <div className="w-full pt-4 border-t border-fg/10 flex items-center justify-between text-[10px] font-mono tracking-widest uppercase text-muted">
-          <span>Peshawar, PK / Remote</span>
+        <div className="w-full pt-4 flex items-center justify-between text-[10px] font-mono tracking-widest uppercase text-muted">
           <span className="hidden sm:inline">
             {profile.analytics}
           </span>
